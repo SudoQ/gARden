@@ -4,11 +4,30 @@ VegetationTable - Class to simulate vegetation.
 
 #include "VegetationTable.h"
 
-//includes
+#include <stdarg.h>
+#include <string>
+#include <iostream>
+#include <Misc/ThrowStdErr.h>
+#include <Math/Math.h>
+#include <Geometry/AffineCombiner.h>
+#include <Geometry/Vector.h>
+#include <GL/gl.h>
+#include <GL/Extensions/GLARBDrawBuffers.h>
+#include <GL/Extensions/GLARBFragmentShader.h>
+#include <GL/Extensions/GLARBMultitexture.h>
+#include <GL/Extensions/GLARBShaderObjects.h>
+#include <GL/Extensions/GLARBTextureFloat.h>
+#include <GL/Extensions/GLARBTextureRectangle.h>
+#include <GL/Extensions/GLARBTextureRg.h>
+#include <GL/Extensions/GLARBVertexShader.h>
+#include <GL/Extensions/GLEXTFramebufferObject.h>
+#include <GL/GLContextData.h>
+#include <GL/GLTransformationWrappers.h>
 
 #include "SurfaceRenderer.h"
 
 namespace {
+
 /****************
 Helper functions:
 ****************/
@@ -58,23 +77,48 @@ GLhandleARB compileFragmentShader(const char* shaderFileName)
 }
 
 /**************************************
-Methods of class WaterTable2::DataItem:
+Methods of class VegetationTable2::DataItem:
 **************************************/
 VegetationTable::DataItem::DataItem(void)
+	:vegetationTextureObject(0), vegetationFramebufferObject(0), vegetationShader(0)
 	{
 	/* Check for and initialize all required OpenGL extensions: */
+	bool supported=GLARBDrawBuffers::isSupported();
+	supported=supported&&GLARBFragmentShader::isSupported();
+	supported=supported&&GLARBMultitexture::isSupported();
+	supported=supported&&GLARBShaderObjects::isSupported();
+	supported=supported&&GLARBTextureFloat::isSupported();
+	supported=supported&&GLARBTextureRectangle::isSupported();
+	supported=supported&&GLARBTextureRg::isSupported();
+	supported=supported&&GLARBVertexShader::isSupported();
+	supported=supported&&GLEXTFramebufferObject::isSupported();
+	if(!supported)
+		Misc::throwStdErr("VegetationTable2: Required functionality not supported by local OpenGL");
+	GLARBDrawBuffers::initExtension();
+	GLARBFragmentShader::initExtension();
+	GLARBMultitexture::initExtension();
+	GLARBShaderObjects::initExtension();
+	GLARBTextureFloat::initExtension();
+	GLARBTextureRectangle::initExtension();
+	GLARBTextureRg::initExtension();
+	GLARBVertexShader::initExtension();
+	GLEXTFramebufferObject::initExtension();
+	}
 	}
 
 VegetationTable::DataItem::~DataItem(void)
 	{
 	// glDeleteObjectARB(...)
+	glDeleteTextures(1, &vegetationTextureObject);
+	glDeleteFramebuffersEXT(1, &vegetationFramebufferObject);
+	glDeleteObjectARB(vegetationShader);
 	}
 
 /************************************
-Static elements of class WaterTable2:
+Static elements of class VegetationTable2:
 ************************************/
 
-const char* WaterTable2::vertexShaderSource="\
+const char* VegetationTable2::vertexShaderSource="\
 	void main()\n\
 		{\n\
 		/* Use standard vertex position: */\n\
@@ -82,7 +126,7 @@ const char* WaterTable2::vertexShaderSource="\
 		}\n";
 
 /****************************
-Methods of class WaterTable2:
+Methods of class VegetationTable2:
 ****************************/
 
 // calcDerivative
@@ -93,7 +137,7 @@ VegetationTable::VegetationTable(
 		const Plane& basePlane,
 		const Point basePlaneCorners[4])
 	{
-	/* Initialize the water table size: */
+	/* Initialize the vegetation table size: */
 	size[0]=width;
 	size[1]=height;
 
@@ -142,12 +186,13 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	contextData.addDataItem(this,dataItem);
 	
 	glActiveTextureARB(GL_TEXTURE0_ARB);
+
+	// Generate framebuffers here, both for render and computations
 	
-	/* Create the vertex-centered bathymetry textures, replacing the outermost layer of cells with ghost cells: */
 	{
-	/* Create the cell-centered water texture: */
-	glGenTextures(1,&dataItem->waterTextureObject);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->waterTextureObject);
+	/* Create the cell-centered vegetation texture: */
+	glGenTextures(1,&dataItem->vegetationTextureObject);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
@@ -164,12 +209,12 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
 
-	/* Create the water frame buffer: */
-	glGenFramebuffersEXT(1,&dataItem->waterFramebufferObject);
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->waterFramebufferObject);
+	/* Create the vegetation frame buffer: */
+	glGenFramebuffersEXT(1,&dataItem->vegetationFramebufferObject);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->vegetationFramebufferObject);
 	
-	/* Attach the water texture to the water frame buffer: */
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->waterTextureObject,0);
+	/* Attach the vegetation texture to the vegetation frame buffer: */
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject,0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	glReadBuffer(GL_NONE);
 	}
@@ -178,16 +223,22 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
 	}
 
-	/* Create the water shader: */
+	/* Create the vegetation shader: */
 	{
 	GLhandleARB vertexShader=glCompileVertexShaderFromString(vertexShaderSource);
-	GLhandleARB fragmentShader=compileFragmentShader("Water2WaterUpdateShader");
-	dataItem->waterShader=glLinkShader(vertexShader,fragmentShader);
+	GLhandleARB fragmentShader=compileFragmentShader("VegetationUpdateShader");
+	dataItem->vegetationShader=glLinkShader(vertexShader,fragmentShader);
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
-	dataItem->waterShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->waterShader,"bathymetrySampler");
-	dataItem->waterShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->waterShader,"quantitySampler");
-	dataItem->waterShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->waterShader,"waterSampler");
+	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"vegetationSampler");
+
 	}
 }
 
+void VegetationTable2::setElevationRange(VegetationTable2::Scalar newMin,VegetationTable2::Scalar newMax)
+	{
+	domain.min[2]=newMin;
+	domain.max[2]=newMax;
+	}
+
+// Method for running a simulation step

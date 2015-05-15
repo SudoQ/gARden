@@ -25,7 +25,7 @@ class VegetationTable:public GLObject
 						GLuint vegetationTextureObject; // Color texture
 						GLuint vegetationFramebufferObject; // Frame buffer used for the vegetation rendering step
 						GLhandleARB vegetationShader; // Shader to render vegetation
-						GLint vegetationShaderUniformLocations[3]; // FIXME assumed 3
+						GLint vegetationShaderUniformLocations[1]; // FIXME Number of shader uniforms
 					
 						/* Constructors and destructors: */
 						DataItem(void);
