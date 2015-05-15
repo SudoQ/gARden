@@ -1121,7 +1121,7 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	if(vegetationTable!=0)
 		{
 			/* Upload the vegetation table texture coordinate matrix: */
-			glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,waterTable->getWaterTextureMatrix());
+			glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,vegetationTable->getVegetationTextureMatrix());
 
 			/* Bind the vegetation texture */
 			glActiveTextureARB(GL_TEXTURE5_ARB); // Note number 5

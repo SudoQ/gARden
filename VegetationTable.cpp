@@ -174,6 +174,19 @@ VegetationTable::VegetationTable(
 
 	/* Initialize simulations parameters */
 	// ...
+
+	/* Create a 4x4 matrix expressing the texture transformation: */
+	Geometry::Matrix<double,4,4> stMat(1.0);
+	stMat(0,0)=double(size[0])/(domain.max[0]-domain.min[0]);
+	stMat(0,3)=stMat(0,0)*-domain.min[0];
+	stMat(1,1)=double(size[1])/(domain.max[1]-domain.min[1]);
+	stMat(1,3)=stMat(1,1)*-domain.min[1];
+	Geometry::Matrix<double,4,4> btMat(1.0);
+	baseTransform.writeMatrix(btMat);
+	Geometry::Matrix<double,4,4> texMat=stMat*btMat;
+	for(int i=0;i<4;++i)
+		for(int j=0;j<4;++j)
+			vegetationTextureMatrix[j*4+i]=texMat(i,j);
 	}
 
 VegetationTable::~VegetationTable(void)

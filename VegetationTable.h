@@ -37,6 +37,7 @@ class VegetationTable:public GLObject
 		Transform baseTransform; // Transformation from camera space to upright elevation map space
 		Box domain; // Domain of elevation map space in rotated camera space
 		GLfloat cellSize[2]; // Width and height of vegetation table cells in world coordinate units
+		GLfloat vegetationTextureMatrix[16]; // An OpenGL-conforming matrix expressing the transformation from camera space to vegetation level texture space
 
 		/* Private methods: */
 		// calcDerivative
@@ -58,6 +59,10 @@ class VegetationTable:public GLObject
 		const Box& getDomain(void) const // Returns the vegetation table's domain in rotated camera space
 			{
 			return domain;
+			}
+		const GLfloat* getVegetationTextureMatrix(void) const // Returns the matrix transforming from camera space into vegetation texture space
+			{
+			return vegetationTextureMatrix;
 			}
 	};
 
