@@ -263,6 +263,7 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 	 */
 void VegetationTable::updateVegetation(GLContextData& contextData) const
 	{
+		GLuint waterTexture = 0; // FIXME Get from water table via Sandbox.cpp
 		/* Get the data item: */
 		DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
@@ -281,7 +282,7 @@ void VegetationTable::updateVegetation(GLContextData& contextData) const
 		/* Bind the water texture */
 		glActiveTextureARB(GL_TEXTURE0_ARB);
 		glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTexture); // Water texture
-		glUniform1iARB(dataItem->vegetationShaderUniformLocations,0);
+		glUniform1iARB(dataItem->vegetationShaderUniformLocations[0],0);
 		
 		/* Run the calculation */
 		glBegin(GL_QUADS);
