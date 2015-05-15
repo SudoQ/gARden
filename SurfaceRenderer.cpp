@@ -616,6 +616,7 @@ void SurfaceRenderer::initContext(GLContextData& contextData) const
 	dataItem->globalAmbientHeightMapShaderUniforms[7]=glGetUniformLocationARB(dataItem->globalAmbientHeightMapShader,"waterLevelSampler");
 	dataItem->globalAmbientHeightMapShaderUniforms[8]=glGetUniformLocationARB(dataItem->globalAmbientHeightMapShader,"waterLevelTextureTransformation");
 	dataItem->globalAmbientHeightMapShaderUniforms[9]=glGetUniformLocationARB(dataItem->globalAmbientHeightMapShader,"waterOpacity");
+	// TODO Add vegetation here?
 	}
 	
 	/* Create the shadowed illuminated height map render shader: */
@@ -638,6 +639,7 @@ void SurfaceRenderer::initContext(GLContextData& contextData) const
 	dataItem->shadowedIlluminatedHeightMapShaderUniforms[10]=glGetUniformLocationARB(dataItem->shadowedIlluminatedHeightMapShader,"waterOpacity");
 	dataItem->shadowedIlluminatedHeightMapShaderUniforms[11]=glGetUniformLocationARB(dataItem->shadowedIlluminatedHeightMapShader,"shadowTextureSampler");
 	dataItem->shadowedIlluminatedHeightMapShaderUniforms[12]=glGetUniformLocationARB(dataItem->shadowedIlluminatedHeightMapShader,"shadowProjection");
+	// TODO Add vegetation here?
 	}
 	}
 
@@ -1277,7 +1279,7 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 		glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[9],waterOpacity);
 		}
 
-	// TODO Add some vegetation table here=
+	// TODO Add vegetation table here? If in ambient height map yes
 	
 	/* Draw the surface: */
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;

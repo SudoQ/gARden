@@ -93,7 +93,7 @@ VegetationTable::DataItem::DataItem(void)
 	supported=supported&&GLARBVertexShader::isSupported();
 	supported=supported&&GLEXTFramebufferObject::isSupported();
 	if(!supported)
-		Misc::throwStdErr("VegetationTable2: Required functionality not supported by local OpenGL");
+		Misc::throwStdErr("VegetationTable: Required functionality not supported by local OpenGL");
 	GLARBDrawBuffers::initExtension();
 	GLARBFragmentShader::initExtension();
 	GLARBMultitexture::initExtension();
@@ -127,8 +127,6 @@ const char* VegetationTable::vertexShaderSource="\
 /****************************
 Methods of class VegetationTable2:
 ****************************/
-
-// calcDerivative
 
 VegetationTable::VegetationTable(
 		GLsizei width, 
@@ -202,7 +200,7 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	// Generate frame buffers here
 	
 	{
-	/* Create the cell-centered vegetation texture: */
+	/* Create the 2D vegetation texture: */
 	glGenTextures(1,&dataItem->vegetationTextureObject);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -255,22 +253,23 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 	/* Get the data item: */
 	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 	
-	/* Bind the conserved quantities texture: */
+	/* Bind the vegetation texture */
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	}
 
-// Method for running a simulation step
+	/* This method calculates the vegetation 
+		 All rendering options will write to the vegetation texture
+		 used later when rendering.
+	 */
 void VegetationTable::updateVegetation(GLContextData& contextData) const
 	{
 		/* Get the data item: */
 		DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
 		/* Save relevant OpenGL state: */
-		glPushAttrib(GL_VIEWPORT_BIT);
+		glPushAttrib(GL_COLOR_BUFFER_BIT|GL_VIEWPORT_BIT);
 		GLint currentFrameBuffer;
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
-		GLfloat currentClearColor[4];
-		glGetFloatv(GL_COLOR_CLEAR_VALUE,currentClearColor);
 
 		// Set up the vegetation compution frame buffer
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, dataItem->vegetationFramebufferObject);
@@ -279,7 +278,7 @@ void VegetationTable::updateVegetation(GLContextData& contextData) const
 
 		glUseProgramObjectARB(dataItem->vegetationShader);
 
-		/* Bind the current max step size texture: */
+		/* Bind the water texture */
 		glActiveTextureARB(GL_TEXTURE0_ARB);
 		glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTexture); // Water texture
 		glUniform1iARB(dataItem->vegetationShaderUniformLocations,0);
@@ -292,6 +291,7 @@ void VegetationTable::updateVegetation(GLContextData& contextData) const
 		glVertex2i(0,size[1]);
 		glEnd();
 
-		glActiveTexturesARB(GL_TEXTURE0_ARB);
-		glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+		/* Restore OpenGL state: */
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
+		glPopAttrib();
 	}
