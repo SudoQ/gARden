@@ -59,6 +59,7 @@ class Camera;
 class FrameFilter;
 class SurfaceRenderer;
 class WaterTable2;
+class VegetationTable;
 typedef Misc::FunctionCall<GLContextData&> AddWaterFunction;
 
 class Sandbox:public Vrui::Application,public GLObject
@@ -170,6 +171,7 @@ class Sandbox:public Vrui::Application,public GLObject
 	SurfaceRenderer* waterRenderer; // A second surface renderer to render the water surface directly
 	Vrui::Lightsource* sun; // An external fixed light source
 	GLMotif::PopupMenu* mainMenu;
+	VegetationTable* vegetationTable; // Vegetation table object
 	
 	/* Private methods: */
 	void rawDepthFrameDispatcher(const Kinect::FrameBuffer& frameBuffer); // Callback receiving raw depth frames from the Kinect camera; forwards them to the frame filter and rain maker objects
