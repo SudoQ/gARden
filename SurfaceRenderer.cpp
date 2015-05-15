@@ -464,12 +464,14 @@ SurfaceRenderer::SurfaceRenderer(const unsigned int sSize[2],const SurfaceRender
 	 illuminate(false),waterTable(0),advectWaterTexture(false),surfaceSettingsVersion(1),
 	 waterOpacity(2.0f),
 	 depthImageVersion(1),
-	 animationTime(0.0)
+	 animationTime(0.0),
+	 vegetationTable(0)
 	{
 	/* Monitor the external shader source files: */
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceAddContourLines.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceIlluminate.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceAddWaterColor.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
+	// TODO Vegetation shader monitor?
 	fileMonitor.startPolling();
 	
 	/* Copy the depth image size: */
