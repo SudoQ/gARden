@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include <GL/GLGeometryVertex.h>
 
 #include "WaterTable2.h"
+#include "VegetationTable.h"
 
 namespace {
 
@@ -270,6 +271,12 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				waterLevelTexCoord=wltc.xy/wltc.w;\n\
 				\n";
 			}
+
+		if(vegetationTable!=0)
+			{
+			// FIXME Need any vertex shaders?
+			}
+
 		
 		/* Finish the vertex shader's main function: */
 		vertexMain+="\
@@ -376,6 +383,10 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					\n";
 				}
 			}
+
+		if(vegetationTable!=0){
+			// FIXME Need any fragment shaders?
+		}
 		
 		/* Finish the fragment shader's main function: */
 		fragmentMain+="\
@@ -426,6 +437,11 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			*(ulPtr++)=glGetUniformLocationARB(result,"quantitySampler");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterOpacity");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterAnimationTime");
+			}
+		if(vegetationTable!=0)
+			{
+			/* Query water handling uniform variables: */
+			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
 			}
 		}
 	catch(...)
@@ -651,6 +667,12 @@ void SurfaceRenderer::setIlluminate(bool newIlluminate)
 void SurfaceRenderer::setWaterTable(WaterTable2* newWaterTable)
 	{
 	waterTable=newWaterTable;
+	++surfaceSettingsVersion;
+	}
+
+void SurfaceRenderer::setVegetationTable(VegetationTable* newVegetationTable)
+	{
+	vegetationTable=newVegetationTable;
 	++surfaceSettingsVersion;
 	}
 
@@ -1093,6 +1115,19 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 		/* Upload the water animation time: */
 		glUniform1fARB(*(ulPtr++),GLfloat(animationTime));
 		}
+
+	if(vegetationTable!=0)
+		{
+			/* Upload the vegetation table texture coordinate matrix: */
+			glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,waterTable->getWaterTextureMatrix());
+
+			/* Bind the vegetation texture */
+			glActiveTextureARB(GL_TEXTURE5_ARB); // Note number 5
+			waterTable->bindVegetationTexture(contextData); // TODO Add this method
+			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+			glUniform1iARB(*(ulPtr++),5); // Note number 5
+		}
 	
 	/* Draw the surface: */
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
@@ -1103,6 +1138,13 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
 	
 	/* Unbind all textures and buffers: */
+	if(vegetationTable!=0)
+		{
+		glActiveTextureARB(GL_TEXTURE5_ARB);
+		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+		}
 	if(waterTable!=0)
 		{
 		glActiveTextureARB(GL_TEXTURE4_ARB);
@@ -1218,6 +1260,8 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 		/* Upload the water opacity factor: */
 		glUniform1fARB(dataItem->globalAmbientHeightMapShaderUniforms[9],waterOpacity);
 		}
+
+	// TODO Add some vegetation table here=
 	
 	/* Draw the surface: */
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
@@ -1317,6 +1361,8 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
 		/* Upload the water opacity factor: */
 		glUniform1fARB(dataItem->shadowedIlluminatedHeightMapShaderUniforms[10],waterOpacity);
 		}
+
+	// TODO Add vegetation table stuff?
 	
 	/* Bind the shadow texture: */
 	glActiveTextureARB(GL_TEXTURE4_ARB);

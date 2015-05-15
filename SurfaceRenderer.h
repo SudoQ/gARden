@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 /* Forward declarations: */
 class GLLightTracker;
 class WaterTable2;
+class VegetationTable;
 
 class SurfaceRenderer:public GLObject
 	{
@@ -95,6 +96,8 @@ class SurfaceRenderer:public GLObject
 	Kinect::FrameBuffer depthImage; // The most recent float-pixel depth image
 	unsigned int depthImageVersion; // Version number of the depth image
 	double animationTime; // Time value for water animation
+
+	VegetationTable* vegetationTable; // Pointer to the vegetation table object
 	
 	/* Private methods: */
 	void shaderSourceFileChanged(const IO::FileMonitor::Event& event); // Callback called when one of the external shader source files is changed
@@ -125,6 +128,8 @@ class SurfaceRenderer:public GLObject
 	void glRenderSinglePass(GLuint heightColorMapTexture,GLContextData& contextData) const; // Renders the surface in a single pass using the current surface settings
 	void glRenderGlobalAmbientHeightMap(GLuint heightColorMapTexture,GLContextData& contextData) const; // Renders the global ambient component of the surface as an illuminated height map in the current OpenGL context using the given pixel-corner elevation texture and 1D height color map
 	void glRenderShadowedIlluminatedHeightMap(GLuint heightColorMapTexture,GLuint shadowTexture,const PTransform& shadowProjection,GLContextData& contextData) const; // Renders the surface as an illuminated height map in the current OpenGL context using the given pixel-corner elevation texture and 1D height color map
+
+	void setVegetationTable(VegetationTable* newVegetationTable); // Sets the pointer to the vegetation table
 	};
 
 #endif
