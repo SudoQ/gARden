@@ -24,7 +24,7 @@
 # matches the default Vrui installation; if Vrui's installation
 # directory was changed during Vrui's installation, the directory below
 # must be adapted.
-VRUI_MAKEDIR := $(HOME)/Vrui-3.0/share/make
+VRUI_MAKEDIR := $(HOME)/Vrui-3.1/share/make
 
 # Base installation directory for the Augmented Reality Sandbox. If this
 # is set to the default of $(PWD), the Augmented Reality Sandbox does
@@ -116,12 +116,14 @@ CalibrateProjector: $(EXEDIR)/CalibrateProjector
 SARNDBOX_SOURCES = FrameFilter.cpp \
                    SurfaceRenderer.cpp \
                    WaterTable2.cpp \
+									 VegetationTable.cpp \
                    RainMaker.cpp \
                    Sandbox.cpp
 
 # Set location of shader directory:
 $(OBJDIR)/SurfaceRenderer.o: CFLAGS += -DSHADERDIR='"$(SHAREINSTALLDIR)/Shaders"'
 $(OBJDIR)/WaterTable2.o: CFLAGS += -DSHADERDIR='"$(SHAREINSTALLDIR)/Shaders"'
+$(OBJDIR)/VegetationTable.o: CFLAGS += -DSHADERDIR='"$(SHAREINSTALLDIR)/Shaders"'
 
 # Set name of default color map:
 $(OBJDIR)/Sandbox.o: CFLAGS += -DDEFAULTHEIGHTCOLORMAPNAME='"HeightColorMap.cpt"'
