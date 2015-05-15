@@ -274,7 +274,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 		if(vegetationTable!=0)
 			{
-			// FIXME Need any vertex shaders?
+			// TODO Need any vertex shaders?
 			}
 
 		
@@ -384,9 +384,23 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				}
 			}
 
-		if(vegetationTable!=0){
-			// FIXME Need any fragment shaders?
-		}
+			if(vegetationTable!=0)
+			{
+				/* 
+					 Change color according to amount of water.
+					 Only change the color is the coordinate is 
+					 not under water. The amount of vegetation
+					 is determined by a precomputed vegetation
+					 buffer.
+				 */
+				fragmentDeclarations+="\
+					void addVegetationColor(in vec2, inout vec4);\n";
+				shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
+
+				fragmentMain+="\
+					addVegetationColor(gl_FragCoord.xy,baseColor);\n\n";
+				
+				}
 		
 		/* Finish the fragment shader's main function: */
 		fragmentMain+="\
@@ -471,7 +485,7 @@ SurfaceRenderer::SurfaceRenderer(const unsigned int sSize[2],const SurfaceRender
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceAddContourLines.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceIlluminate.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceAddWaterColor.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
-	// TODO Vegetation shader monitor?
+	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceAddVegetationColor.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
 	fileMonitor.startPolling();
 	
 	/* Copy the depth image size: */
@@ -1125,7 +1139,7 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 
 			/* Bind the vegetation texture */
 			glActiveTextureARB(GL_TEXTURE5_ARB); // Note number 5
-			vegetationTable->bindVegetationTexture(contextData); // TODO Add this method
+			vegetationTable->bindVegetationTexture(contextData);
 			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			glUniform1iARB(*(ulPtr++),5); // Note number 5
