@@ -104,7 +104,6 @@ VegetationTable::DataItem::DataItem(void)
 	GLARBVertexShader::initExtension();
 	GLEXTFramebufferObject::initExtension();
 	}
-	}
 
 VegetationTable::DataItem::~DataItem(void)
 	{
@@ -118,7 +117,7 @@ VegetationTable::DataItem::~DataItem(void)
 Static elements of class VegetationTable2:
 ************************************/
 
-const char* VegetationTable2::vertexShaderSource="\
+const char* VegetationTable::vertexShaderSource="\
 	void main()\n\
 		{\n\
 		/* Use standard vertex position: */\n\
@@ -230,11 +229,9 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject,0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	glReadBuffer(GL_NONE);
-	}
 	
 	/* Restore the previously bound frame buffer: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
-	}
 
 	/* Create the vegetation shader: */
 	{
@@ -244,14 +241,22 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
 	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"vegetationSampler");
-
 	}
 }
 
-void VegetationTable2::setElevationRange(VegetationTable2::Scalar newMin,VegetationTable2::Scalar newMax)
+void VegetationTable::setElevationRange(VegetationTable::Scalar newMin,VegetationTable::Scalar newMax)
 	{
 	domain.min[2]=newMin;
 	domain.max[2]=newMax;
+	}
+
+void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
+	{
+	/* Get the data item: */
+	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
+	
+	/* Bind the conserved quantities texture: */
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	}
 
 // Method for running a simulation step

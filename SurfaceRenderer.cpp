@@ -1125,7 +1125,7 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 
 			/* Bind the vegetation texture */
 			glActiveTextureARB(GL_TEXTURE5_ARB); // Note number 5
-			waterTable->bindVegetationTexture(contextData); // TODO Add this method
+			vegetationTable->bindVegetationTexture(contextData); // TODO Add this method
 			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			glUniform1iARB(*(ulPtr++),5); // Note number 5
