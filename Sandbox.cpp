@@ -78,6 +78,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include "FrameFilter.h"
 #include "SurfaceRenderer.h"
 #include "WaterTable2.h"
+#include "VegetationTable.h"
 
 /*******************************************
 Static elements of class Sandbox::WaterTool:
@@ -455,7 +456,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	 fixProjectorView(false),hillshade(false),useShadows(false),useHeightMap(false),
 	 waterRenderer(0),
 	 sun(0),
-	 mainMenu(0)
+	 mainMenu(0),
+	 vegetationTable(0)
 	{
 	/* Initialize the custom tool classes: */
 	WaterTool::initClass(*Vrui::getToolManager());
@@ -810,6 +812,9 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	waterTable=new WaterTable2(wtSize[0],wtSize[1],basePlane,basePlaneCorners);
 	waterTable->setElevationRange(elevationMin,rainElevationMax);
 	waterTable->setWaterDeposit(evaporationRate);
+
+	/* Initialize the vegetation simulator */
+	vegetationTable=new VegetationTable(wtSize[0],wtSize[1],basePlane,basePlaneCorners);
 	
 	/* Register a render function with the water table: */
 	addWaterFunction=Misc::createFunctionCall(this,&Sandbox::addWater);
@@ -850,6 +855,12 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 			surfaceRenderer->setWaterOpacity(waterOpacity);
 			}
 		}
+
+	if(vegetationTable!=0)
+		{
+			// TODO Need to do anything else here?
+			surfaceRenderer->setVegetationTable(vegetationTable);
+		}
 	
 	#if 0
 	/* Create a fixed-position light source: */
@@ -889,6 +900,7 @@ Sandbox::~Sandbox(void)
 	/* Delete helper objects: */
 	delete surfaceRenderer;
 	delete waterTable;
+	delete vegetationTable;
 	delete rmFrameFilter;
 	delete rainMaker;
 	delete addWaterFunction;
@@ -950,6 +962,10 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		}
+
+	if(vegetationTable!=0){
+		// TODO Run simulation step
+	}
 	
 	if(fixProjectorView)
 		{
