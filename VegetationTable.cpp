@@ -199,7 +199,7 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 
-	// Generate framebuffers here, both for render and computations
+	// Generate frame buffers here
 	
 	{
 	/* Create the cell-centered vegetation texture: */
@@ -240,7 +240,7 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	dataItem->vegetationShader=glLinkShader(vertexShader,fragmentShader);
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
-	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"vegetationSampler");
+	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"waterSampler");
 	}
 }
 
@@ -260,3 +260,38 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 	}
 
 // Method for running a simulation step
+void VegetationTable::updateVegetation(GLContextData& contextData) const
+	{
+		/* Get the data item: */
+		DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
+
+		/* Save relevant OpenGL state: */
+		glPushAttrib(GL_VIEWPORT_BIT);
+		GLint currentFrameBuffer;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
+		GLfloat currentClearColor[4];
+		glGetFloatv(GL_COLOR_CLEAR_VALUE,currentClearColor);
+
+		// Set up the vegetation compution frame buffer
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, dataItem->vegetationFramebufferObject);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+		glViewport(0,0,size[0],size[1]);
+
+		glUseProgramObjectARB(dataItem->vegetationShader);
+
+		/* Bind the current max step size texture: */
+		glActiveTextureARB(GL_TEXTURE0_ARB);
+		glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTexture); // Water texture
+		glUniform1iARB(dataItem->vegetationShaderUniformLocations,0);
+		
+		/* Run the calculation */
+		glBegin(GL_QUADS);
+		glVertex2i(0,0);
+		glVertex2i(size[0],0);
+		glVertex2i(size[0],size[1]);
+		glVertex2i(0,size[1]);
+		glEnd();
+
+		glActiveTexturesARB(GL_TEXTURE0_ARB);
+		glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+	}
