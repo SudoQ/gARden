@@ -1074,3 +1074,16 @@ void WaterTable2::bindQuantityTexture(GLContextData& contextData) const
 	/* Bind the conserved quantities texture: */
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->quantityTextureObject);
 	}
+
+/**************************************
+Methods needed for the VegetationTable
+***************************************/
+
+GLuint WaterTable2::getWaterTextureObject(GLContextData& contextData) const
+	{
+	/* Get the data item: */
+	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
+	
+	/* Return the water texture object */
+	return dataItem->waterTextureObject;
+	}

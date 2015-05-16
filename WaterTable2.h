@@ -141,6 +141,7 @@ class WaterTable2:public GLObject
 		{
 		return waterTextureMatrix;
 		}
+	GLuint getWaterTextureObject(GLContextData& contextData) const; // Method needed for VegetationTable
 	};
 
 #endif
