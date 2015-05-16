@@ -81,7 +81,7 @@ class VegetationTable:public GLObject
 	void bindVegetationTexture(GLContextData& contextData) const;
 	void setElevationRange(VegetationTable::Scalar newMin,VegetationTable::Scalar newMax);
 
-	void updateVegetation(GLContextData& contextData) const;
+	void updateVegetation(GLContextData& contextData, GLuint waterTextureObject) const;
 	};
 
 #endif

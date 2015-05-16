@@ -261,9 +261,8 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 		 All rendering options will write to the vegetation texture
 		 used later when rendering.
 	 */
-void VegetationTable::updateVegetation(GLContextData& contextData) const
+void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterTextureObject) const
 	{
-		GLuint waterTexture = 0; // FIXME Get from water table via Sandbox.cpp
 		/* Get the data item: */
 		DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
@@ -281,8 +280,8 @@ void VegetationTable::updateVegetation(GLContextData& contextData) const
 
 		/* Bind the water texture */
 		glActiveTextureARB(GL_TEXTURE0_ARB);
-		glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTexture); // Water texture
-		glUniform1iARB(dataItem->vegetationShaderUniformLocations[0],0);
+		glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTextureObject); // Water texture
+		glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0); // Set previously bound water texture
 		
 		/* Run the calculation */
 		glBegin(GL_QUADS);
