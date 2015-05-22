@@ -257,41 +257,42 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	}
 
+void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterTextureObject) const
+	{
 	/* This method calculates the vegetation 
 		 All rendering options will write to the vegetation texture
 		 used later when rendering.
 	 */
-void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterTextureObject) const
-	{
-		/* Get the data item: */
-		DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
-		/* Save relevant OpenGL state: */
-		glPushAttrib(GL_COLOR_BUFFER_BIT|GL_VIEWPORT_BIT);
-		GLint currentFrameBuffer;
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
+	/* Get the data item: */
+	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
-		// Set up the vegetation compution frame buffer
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, dataItem->vegetationFramebufferObject);
-		glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-		glViewport(0,0,size[0],size[1]);
+	/* Save relevant OpenGL state: */
+	glPushAttrib(GL_COLOR_BUFFER_BIT|GL_VIEWPORT_BIT);
+	GLint currentFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
 
-		glUseProgramObjectARB(dataItem->vegetationShader);
+	// Set up the vegetation compution frame buffer
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, dataItem->vegetationFramebufferObject);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+	glViewport(0,0,size[0],size[1]);
 
-		/* Bind the water texture */
-		glActiveTextureARB(GL_TEXTURE0_ARB);
-		glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTextureObject); // Water texture
-		glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0); // Set previously bound water texture
-		
-		/* Run the calculation */
-		glBegin(GL_QUADS);
-		glVertex2i(0,0);
-		glVertex2i(size[0],0);
-		glVertex2i(size[0],size[1]);
-		glVertex2i(0,size[1]);
-		glEnd();
+	glUseProgramObjectARB(dataItem->vegetationShader);
 
-		/* Restore OpenGL state: */
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
-		glPopAttrib();
+	/* Bind the water texture */
+	glActiveTextureARB(GL_TEXTURE0_ARB);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTextureObject); // Water texture
+	glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0); // Set previously bound water texture
+	
+	/* Run the calculation */
+	glBegin(GL_QUADS);
+	glVertex2i(0,0);
+	glVertex2i(size[0],0);
+	glVertex2i(size[0],size[1]);
+	glVertex2i(0,size[1]);
+	glEnd();
+
+	/* Restore OpenGL state: */
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
+	glPopAttrib();
 	}
