@@ -274,9 +274,16 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 		if(vegetationTable!=0)
 			{
-			// TODO Need any vertex shaders?
+			vertexUniforms+="\
+				uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
+			vertexVaryings+="\
+				varying vec2 vegetationTexCoord; // Texture coordinate for vegetation texture\n";
+			vertexMain+="\
+				/* Transform the vertex from camera space to vegetation texture coordinate space: */\n\
+				vec4 vtc=vegetationTextureTransformation*vertecCc;\n\
+				vegetationTexCoord=vtc.xy/vtc.w;\n\
+				\n";
 			}
-
 		
 		/* Finish the vertex shader's main function: */
 		vertexMain+="\
@@ -285,7 +292,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				}\n";
 		
 		/* Compile the vertex shader: */
-		shaders.push_back(glCompileVertexShaderFromStrings(7,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
+		shaders.push_back(glCompileVertexShaderFromStrings(8,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
 		
 		/*********************************************************************
 		Assemble and compile the surface rendering fragment shaders:
@@ -409,7 +416,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			}\n";
 		
 		/* Compile the fragment shader: */
-		shaders.push_back(glCompileFragmentShaderFromStrings(7,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
+		shaders.push_back(glCompileFragmentShaderFromStrings(8,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
 		
 		/* Link the shader program: */
 		result=glLinkShader(shaders);
@@ -455,6 +462,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 		if(vegetationTable!=0)
 			{
 			/* Query water handling uniform variables: */
+			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationTextureTransformation");
 			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
 			}
 		}
@@ -1136,7 +1144,6 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 
 	if(vegetationTable!=0)
 		{
-			// TODO this first uniform might not be need if the TextureMatrix is not needed
 			/* Upload the vegetation table texture coordinate matrix: */
 			glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,vegetationTable->getVegetationTextureMatrix());
 
