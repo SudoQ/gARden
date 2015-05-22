@@ -292,7 +292,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				}\n";
 		
 		/* Compile the vertex shader: */
-		shaders.push_back(glCompileVertexShaderFromStrings(7,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
+		shaders.push_back(glCompileVertexShaderFromStrings(8,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
 		
 		/*********************************************************************
 		Assemble and compile the surface rendering fragment shaders:
@@ -416,7 +416,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			}\n";
 		
 		/* Compile the fragment shader: */
-		shaders.push_back(glCompileFragmentShaderFromStrings(7,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
+		shaders.push_back(glCompileFragmentShaderFromStrings(8,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
 		
 		/* Link the shader program: */
 		result=glLinkShader(shaders);
