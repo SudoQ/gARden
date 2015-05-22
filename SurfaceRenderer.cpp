@@ -400,13 +400,14 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					 is determined by a precomputed vegetation
 					 buffer.
 				 */
+				
 				fragmentDeclarations+="\
 					void addVegetationColor(in vec2, inout vec4);\n";
 				shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
 
 				fragmentMain+="\
 					addVegetationColor(gl_FragCoord.xy,baseColor);\n\n";
-				
+					
 				}
 		
 		/* Finish the fragment shader's main function: */
