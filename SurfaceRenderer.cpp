@@ -462,6 +462,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 		if(vegetationTable!=0)
 			{
 			/* Query water handling uniform variables: */
+			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationTextureTransformation");
 			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
 			}
 		}
@@ -1143,7 +1144,6 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 
 	if(vegetationTable!=0)
 		{
-			// TODO this first uniform might not be need if the TextureMatrix is not needed
 			/* Upload the vegetation table texture coordinate matrix: */
 			glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,vegetationTable->getVegetationTextureMatrix());
 
