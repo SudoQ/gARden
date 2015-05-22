@@ -274,15 +274,11 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 		if(vegetationTable!=0)
 			{
-			vertexUniforms+="\
-				uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
-			vertexVaryings+="\
-				varying vec2 vegetationTexCoord; // Texture coordinate for vegetation texture\n";
-			vertexMain+="\
-				/* Transform the vertex from camera space to vegetation texture coordinate space: */\n\
+			vertexUniforms+="uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
+			vertexVaryings+="varying vec2 vegetationTexCoord; // Texture coordinate for vegetation texture\n";
+			vertexMain+="//Transform the vertex from camera space to vegetation texture coordinate space: \n\
 				vec4 vtc=vegetationTextureTransformation*vertecCc;\n\
-				vegetationTexCoord=vtc.xy/vtc.w;\n\
-				\n";
+				vegetationTexCoord=vtc.xy/vtc.w;\n\n";
 			}
 		
 		/* Finish the vertex shader's main function: */
@@ -292,7 +288,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				}\n";
 		
 		/* Compile the vertex shader: */
-		shaders.push_back(glCompileVertexShaderFromStrings(8,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
+		shaders.push_back(glCompileVertexShaderFromStrings(7,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
 		
 		/*********************************************************************
 		Assemble and compile the surface rendering fragment shaders:
@@ -400,15 +396,13 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					 is determined by a precomputed vegetation
 					 buffer.
 				 */
-				
-				fragmentDeclarations+="\
-					void addVegetationColor(in vec2, inout vec4);\n";
+					
+				fragmentDeclarations+="void addVegetationColor(in vec2, inout vec4);\n";
 				shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
-
-				fragmentMain+="\
-					addVegetationColor(gl_FragCoord.xy,baseColor);\n\n";
+				fragmentMain+="addVegetationColor(gl_FragCoord.xy,baseColor);\n\n";
 					
 				}
+				
 		
 		/* Finish the fragment shader's main function: */
 		fragmentMain+="\
