@@ -50,7 +50,6 @@ class VegetationTable:public GLObject
 	Box domain; // Domain of elevation map space in rotated camera space
 	GLfloat cellSize[2]; // Width and height of vegetation table cells in world coordinate units
 
-	// FIXME Is maybe not needed
 	GLfloat vegetationTextureMatrix[16]; // An OpenGL-conforming matrix expressing the transformation from camera space to vegetation level texture space, 
 
 	/* Private methods: */
