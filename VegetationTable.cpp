@@ -259,9 +259,9 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 
 void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterTextureObject) const
 	{
-	/* This method calculates the vegetation 
-		 All rendering options will write to the vegetation texture
-		 used later when rendering.
+	/* This method calculates the vegetation.
+		 All rendering options will write to the vegetation texture used later when rendering.
+		 Takes the current water texture as input
 	 */
 
 	/* Get the data item: */
