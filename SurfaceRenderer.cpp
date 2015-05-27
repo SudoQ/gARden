@@ -274,10 +274,13 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 		if(vegetationTable!=0)
 			{
-			vertexUniforms+="uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
-			vertexVaryings+="varying vec2 vegetationTexCoord; // Texture coordinate for vegetation texture\n";
-			vertexMain+="//Transform the vertex from camera space to vegetation texture coordinate space: \n\
-				vec4 vtc=vegetationTextureTransformation*vertecCc;\n\
+			vertexUniforms+="\
+				uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
+			vertexVaryings+="\
+				varying vec2 vegetationTexCoord; // Texture coordinate for vegetation texture\n";
+			vertexMain+="\
+				//Transform the vertex from camera space to vegetation texture coordinate space: \n\
+				vec4 vtc=vegetationTextureTransformation*vertexCc;\n\
 				vegetationTexCoord=vtc.xy/vtc.w;\n\n";
 			}
 		
