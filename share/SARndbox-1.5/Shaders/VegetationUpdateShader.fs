@@ -12,7 +12,7 @@ void updateVegetation(out vec4 fragColor, in vec2 fragCoord)
 	float hydration = 0.0;
 	for(float i = -10.0; i < 10.0; i++){
 			for(float j = -10.0; j < 10.0; j++){
-				hydration = hydration + texture2DRect(waterSampler, vec2(uv.x+i, uv.y+j)).r;
+				hydration = hydration + texture2DRect(waterSampler, vec2(fragCoord.x+i, fragCoord.y+j)).r;
 			}
 	}
 	hydration = hydration/400.0; // Normalize
