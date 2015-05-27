@@ -6,8 +6,6 @@
 #include <string>
 #include <math.h>
 
-// Shader macro
-#define GLSL(src) "#version 150 core\n#extension GL_ARB_texture_rectangle : enable\n" #src
 std::string readFile(const char* path){
 	std::ifstream infile(path);
 	std::string str((std::istreambuf_iterator<char>(infile)),
@@ -85,10 +83,10 @@ int main(int argc, char** argv){
 	}
 	GLuint shaderType;	
 	if (std::string("frag").compare(argv[1])==0){
-		printf("Fragment shader!\n");
+		printf("Compiling fragment shader %s\n",argv[2]);
 		shaderType = GL_FRAGMENT_SHADER;
 	} else {
-		printf("Vertex shader!\n");
+		printf("Compiling vertex shader %s\n",argv[2]);
 		shaderType = GL_VERTEX_SHADER;
 	}
 	std::string shaderSrc = readFile(argv[2]);
@@ -96,6 +94,5 @@ int main(int argc, char** argv){
 	compileShader(shaderSrc.c_str(), shader, shaderType);
 
 	glfwTerminate();
-	printf("Shader ok!\n");
 	return 0;
 }
