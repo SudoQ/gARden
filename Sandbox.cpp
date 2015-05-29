@@ -966,10 +966,10 @@ void Sandbox::display(GLContextData& contextData) const
 
 			if(vegetationTable!=0){ // Need water to run vegetation simulation
 				/* Get the water texture */
-				//GLuint waterTextureObject = waterTable->getWaterTextureObject(contextData);
+				GLuint waterTextureObject = waterTable->getWaterTextureObject(contextData);
 
 				/* Update vegetation texture */
-				//vegetationTable->updateVegetation(contextData, waterTextureObject);
+				vegetationTable->updateVegetation(contextData, waterTextureObject);
 			}
 		}
 

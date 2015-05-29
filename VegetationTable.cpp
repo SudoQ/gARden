@@ -264,6 +264,7 @@ void VegetationTable::bindVegetationTexture(GLContextData& contextData) const
 
 void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterTextureObject) const
 	{
+		fprintf(stderr,"Updating vegetation...\n");
 	/* This method calculates the vegetation.
 		 All rendering options will write to the vegetation texture used later when rendering.
 		 Takes the current water texture as input
@@ -277,6 +278,7 @@ void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterT
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
 
 	// Set up the vegetation compution frame buffer
+	if(dataItem->vegetationFramebufferObject == 0){fprintf(stderr, "VegeError");}
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, dataItem->vegetationFramebufferObject);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	glViewport(0,0,size[0],size[1]);
@@ -288,7 +290,6 @@ void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterT
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, waterTextureObject); // Water texture
 	glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0); // Set previously bound water texture
 	
-	/* Run the calculation */
 	glBegin(GL_QUADS);
 	glVertex2i(0,0);
 	glVertex2i(size[0],0);

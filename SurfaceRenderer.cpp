@@ -782,7 +782,7 @@ void SurfaceRenderer::glRenderDepthOnly(const SurfaceRenderer::PTransform& model
 	// New debug
 	GLint slaskFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
-	fprintf(stderr,"Slask1: %d\n");
+	fprintf(stderr,"Slask1: %d\n",slaskFrameBuffer);
 
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
@@ -845,7 +845,7 @@ void SurfaceRenderer::glRenderElevation(GLContextData& contextData) const
 	// New debug
 	GLint slaskFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
-	fprintf(stderr,"Slask2: %d\n");
+	fprintf(stderr,"Slask2: %d\n",slaskFrameBuffer);
 
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
@@ -1005,7 +1005,7 @@ void SurfaceRenderer::glPrepareContourLines(GLContextData& contextData) const
 	// New debug
 	GLint slaskFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
-	fprintf(stderr,"Slask3: %d\n");
+	fprintf(stderr,"Slask3: %d\n",slaskFrameBuffer);
 
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
@@ -1168,10 +1168,10 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 
 	if(vegetationTable!=0)
 		{
-			/* Upload the vegetation table texture coordinate matrix: */
+			// Upload the vegetation table texture coordinate matrix:
 			glUniformMatrix4fvARB(*(ulPtr++),1,GL_FALSE,vegetationTable->getVegetationTextureMatrix());
 
-			/* Bind the vegetation texture */
+			// Bind the vegetation texture
 			glActiveTextureARB(GL_TEXTURE5_ARB); // Note number 5
 			vegetationTable->bindVegetationTexture(contextData);
 			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -1183,11 +1183,6 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
-
-	// New debug
-	GLint slaskFrameBuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
-	fprintf(stderr,"Slask4: %d\n");
 
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
@@ -1327,7 +1322,7 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 	// New debug
 	GLint slaskFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
-	fprintf(stderr,"Slask5: %d\n");
+	fprintf(stderr,"Slask5: %d\n",slaskFrameBuffer);
 
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
@@ -1456,7 +1451,7 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
 	// New debug
 	GLint slaskFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
-	fprintf(stderr,"Slask6: %d\n");
+	fprintf(stderr,"Slask6: %d\n",slaskFrameBuffer);
 
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
