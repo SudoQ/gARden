@@ -274,14 +274,17 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 		if(vegetationTable!=0)
 			{
+			
 			vertexUniforms+="\
 				uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
 			vertexVaryings+="\
 				varying vec2 vegetationTexCoord; // Texture coordinate for vegetation texture\n";
+			
 			vertexMain+="\
 				//Transform the vertex from camera space to vegetation texture coordinate space: \n\
 				vec4 vtc=vegetationTextureTransformation*vertexCc;\n\
 				vegetationTexCoord=vtc.xy/vtc.w;\n\n";
+		
 			}
 		
 		/* Finish the vertex shader's main function: */
@@ -414,7 +417,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			}\n";
 		
 		/* Compile the fragment shader: */
-		shaders.push_back(glCompileFragmentShaderFromStrings(8,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
+		shaders.push_back(glCompileFragmentShaderFromStrings(7,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
 		
 		/* Link the shader program: */
 		result=glLinkShader(shaders);
