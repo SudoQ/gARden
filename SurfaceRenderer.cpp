@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include <GL/GLContextData.h>
 #include <GL/GLGeometryVertex.h>
 
+#include <stdio.h>
 #include "WaterTable2.h"
 #include "VegetationTable.h"
 
@@ -777,6 +778,12 @@ void SurfaceRenderer::glRenderDepthOnly(const SurfaceRenderer::PTransform& model
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
+
+	// New debug
+	GLint slaskFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
+	fprintf(stderr,"Slask1: %d\n");
+
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
@@ -834,6 +841,12 @@ void SurfaceRenderer::glRenderElevation(GLContextData& contextData) const
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
+
+	// New debug
+	GLint slaskFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
+	fprintf(stderr,"Slask2: %d\n");
+
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
@@ -880,6 +893,7 @@ void SurfaceRenderer::glPrepareContourLines(GLContextData& contextData) const
 		
 		/* Create and bind the frame buffer object: */
 		glGenFramebuffersEXT(1,&dataItem->contourLineFramebufferObject);
+		if(&dataItem->contourLineFramebufferObject == 0){fprintf(stderr, "S1\n");}
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->contourLineFramebufferObject);
 		
 		/* Create a depth buffer for topographic contour line rendering: */
@@ -891,6 +905,7 @@ void SurfaceRenderer::glPrepareContourLines(GLContextData& contextData) const
 	else
 		{
 		/* Bind the frame buffer object: */
+		if(dataItem->contourLineFramebufferObject == 0){fprintf(stderr, "S2\n");}
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->contourLineFramebufferObject);
 		}
 	
@@ -986,6 +1001,12 @@ void SurfaceRenderer::glPrepareContourLines(GLContextData& contextData) const
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
+
+	// New debug
+	GLint slaskFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
+	fprintf(stderr,"Slask3: %d\n");
+
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
@@ -1012,6 +1033,7 @@ void SurfaceRenderer::glPrepareContourLines(GLContextData& contextData) const
 	glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
 	
 	/* Restore the original clear color and frame buffer binding: */
+	if(currentFrameBuffer == 0){fprintf(stderr, "S3\n");}
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
 	glClearColor(currentClearColor[0],currentClearColor[1],currentClearColor[2],currentClearColor[3]);
 	}
@@ -1161,6 +1183,12 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
+
+	// New debug
+	GLint slaskFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
+	fprintf(stderr,"Slask4: %d\n");
+
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
@@ -1295,6 +1323,12 @@ void SurfaceRenderer::glRenderGlobalAmbientHeightMap(GLuint heightColorMapTextur
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
+
+	// New debug
+	GLint slaskFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
+	fprintf(stderr,"Slask5: %d\n");
+
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
 	GLVertexArrayParts::disable(Vertex::getPartsMask());
@@ -1418,6 +1452,12 @@ void SurfaceRenderer::glRenderShadowedIlluminatedHeightMap(GLuint heightColorMap
 	typedef GLGeometry::Vertex<void,0,void,0,void,float,3> Vertex;
 	GLVertexArrayParts::enable(Vertex::getPartsMask());
 	glVertexPointer(static_cast<const Vertex*>(0));
+	
+	// New debug
+	GLint slaskFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&slaskFrameBuffer);
+	fprintf(stderr,"Slask6: %d\n");
+
 	for(unsigned int y=1;y<size[1];++y)
 		glDrawElements(GL_QUAD_STRIP,size[0]*2,GL_UNSIGNED_INT,static_cast<const GLuint*>(0)+(y-1)*size[0]*2);
 	GLVertexArrayParts::disable(Vertex::getPartsMask());

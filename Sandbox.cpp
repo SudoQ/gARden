@@ -68,6 +68,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include <Vrui/OpenFile.h>
 #include <Kinect/Camera.h>
 
+#include <stdio.h>
+
 #define SAVEDEPTH 0
 
 #if SAVEDEPTH
@@ -1025,6 +1027,7 @@ void Sandbox::display(GLContextData& contextData) const
 					***************************************************************/
 					
 					/* Set up OpenGL state to render to the shadow map: */
+					if(dataItem->shadowFramebufferObject == 0){fprintf(stderr, "A1");}
 					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->shadowFramebufferObject);
 					glViewport(0,0,dataItem->shadowBufferSize[0],dataItem->shadowBufferSize[1]);
 					glDepthMask(GL_TRUE);
@@ -1117,6 +1120,7 @@ void Sandbox::display(GLContextData& contextData) const
 					surfaceRenderer->glRenderDepthOnly(shadowProjection,contextData);
 					
 					/* Reset OpenGL state: */
+					if(currentFrameBuffer == 0){fprintf(stderr, "A2\n");}
 					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
 					glViewport(currentViewport[0],currentViewport[1],currentViewport[2],currentViewport[3]);
 					glCullFace(GL_BACK);
@@ -1207,6 +1211,7 @@ void Sandbox::initContext(GLContextData& contextData) const
 	
 	/* Generate the shadow rendering frame buffer: */
 	glGenFramebuffersEXT(1,&dataItem->shadowFramebufferObject);
+	if(dataItem->shadowFramebufferObject == 0){fprintf(stderr, "A3\n");}
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->shadowFramebufferObject);
 	
 	/* Generate a depth texture for shadow rendering: */
@@ -1226,6 +1231,7 @@ void Sandbox::initContext(GLContextData& contextData) const
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_TEXTURE_2D,dataItem->shadowDepthTextureObject,0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
+	if(currentFrameBuffer == 0){fprintf(stderr, "A4\n");}
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
 	} 
 	}

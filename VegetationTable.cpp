@@ -24,6 +24,8 @@ VegetationTable - Class to simulate vegetation.
 #include <GL/GLContextData.h>
 #include <GL/GLTransformationWrappers.h>
 
+#include <stdio.h>
+
 #include "SurfaceRenderer.h"
 
 namespace {
@@ -221,6 +223,7 @@ void VegetationTable::initContext(GLContextData& contextData) const
 
 	/* Create the vegetation frame buffer: */
 	glGenFramebuffersEXT(1,&dataItem->vegetationFramebufferObject);
+	if(dataItem->vegetationFramebufferObject == 0){fprintf(stderr,"V1\n");}
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->vegetationFramebufferObject);
 	
 	/* Attach the vegetation texture to the vegetation frame buffer: */
@@ -230,6 +233,7 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	glReadBuffer(GL_NONE);
 	
 	/* Restore the previously bound frame buffer: */
+	if(currentFrameBuffer == 0){fprintf(stderr,"V2\n");}
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
 
 	/* Create the vegetation shader: */
