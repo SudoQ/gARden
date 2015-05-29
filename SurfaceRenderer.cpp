@@ -274,7 +274,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 		if(vegetationTable!=0)
 			{
-			
+			/*
 			vertexUniforms+="\
 				uniform mat4 vegetationTextureTransformation; // Transformation from camera space to vegetation texture coordinate space\n";
 			vertexVaryings+="\
@@ -284,7 +284,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				//Transform the vertex from camera space to vegetation texture coordinate space: \n\
 				vec4 vtc=vegetationTextureTransformation*vertexCc;\n\
 				vegetationTexCoord=vtc.xy/vtc.w;\n\n";
-		
+			*/	
 			}
 		
 		/* Finish the vertex shader's main function: */
@@ -294,7 +294,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				}\n";
 		
 		/* Compile the vertex shader: */
-		shaders.push_back(glCompileVertexShaderFromStrings(8,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
+		shaders.push_back(glCompileVertexShaderFromStrings(7,vertexFunctions.c_str(),"\t\t\n",vertexUniforms.c_str(),"\t\t\n",vertexVaryings.c_str(),"\t\t\n",vertexMain.c_str()));
 		
 		/*********************************************************************
 		Assemble and compile the surface rendering fragment shaders:
@@ -402,11 +402,11 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					 is determined by a precomputed vegetation
 					 buffer.
 				 */
-					
+				/*				
 				fragmentDeclarations+="void addVegetationColor(in vec2, inout vec4);\n";
 				shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
 				fragmentMain+="addVegetationColor(gl_FragCoord.xy,baseColor);\n\n";
-					
+				*/	
 				}
 				
 		
@@ -417,7 +417,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			}\n";
 		
 		/* Compile the fragment shader: */
-		shaders.push_back(glCompileFragmentShaderFromStrings(8,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
+		shaders.push_back(glCompileFragmentShaderFromStrings(7,fragmentDeclarations.c_str(),"\t\t\n",fragmentUniforms.c_str(),fragmentVaryings.c_str(),"\t\t\n","\t\t\n",fragmentMain.c_str()));
 		
 		/* Link the shader program: */
 		result=glLinkShader(shaders);
@@ -460,11 +460,12 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterOpacity");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterAnimationTime");
 			}
+		
 		if(vegetationTable!=0)
 			{
 			/* Query water handling uniform variables: */
-			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationTextureTransformation");
-			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
+			//*(ulPtr++)=glGetUniformLocationARB(result,"vegetationTextureTransformation");
+			//*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
 			}
 		}
 	catch(...)

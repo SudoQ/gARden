@@ -226,6 +226,7 @@ void VegetationTable::initContext(GLContextData& contextData) const
 	/* Attach the vegetation texture to the vegetation frame buffer: */
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject,0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+	//glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	
 	/* Restore the previously bound frame buffer: */
@@ -263,7 +264,6 @@ void VegetationTable::updateVegetation(GLContextData& contextData, GLuint waterT
 		 All rendering options will write to the vegetation texture used later when rendering.
 		 Takes the current water texture as input
 	 */
-
 	/* Get the data item: */
 	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
