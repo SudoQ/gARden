@@ -949,7 +949,13 @@ void Sandbox::display(GLContextData& contextData) const
 			}
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
+		
+
+		waterTable->bindQuantityTexture();
+		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, GL_FLOAT, image) // Get the water quantity texture
 		}
+
+
 	
 	if(fixProjectorView)
 		{
