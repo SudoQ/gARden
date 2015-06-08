@@ -1074,22 +1074,3 @@ void WaterTable2::bindQuantityTexture(GLContextData& contextData) const
 	/* Bind the conserved quantities texture: */
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->quantityTextureObject);
 	}
-
-void WaterTable2::updateVegetation(GLContextData& contextData) const {
-	/* Get the data item: */
-	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
-
-	/* Save relevant OpenGL state: */
-	glPushAttrib(GL_VIEWPORT_BIT); // TODO Test GL_ALL_ATTRIB_BITS
-	GLint currentFrameBuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
-	GLfloat currentClearColor[4];
-	glGetFloatv(GL_COLOR_CLEAR_VALUE,currentClearColor);
-
-	bindQuantityTexture(contextData); // Bind the quantity texture
-
-	/* Restore OpenGL state: */
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
-	glClearColor(currentClearColor[0],currentClearColor[1],currentClearColor[2],currentClearColor[3]);
-	glPopAttrib();
-}
