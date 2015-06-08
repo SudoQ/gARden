@@ -233,7 +233,12 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 		baseColor=mix(baseColor,waterColor,min(waterLevel*waterOpacity,1.0));
 		} else {
 			// Not under water, add vegetation
-			addVegetationColor(baseColor);
+			#if 0
+			addVegetationColor(baseColor); // More advanced vegetation coloring
+			#else
+			baseColor.g = 1.0; // All non water is green!
+			#endif
+
 		}
 	}
 
