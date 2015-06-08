@@ -436,6 +436,11 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	GLfloat* v=makeBuffer(size[0],size[1],1,0.0);
 	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,v);
 	delete[] v;
+	// Check any errors, just in case
+	GLenum err;
+	while((err = glGetError()) != GL_NO_ERROR) {
+		std::cerr << "OpenGL error: " << err << std::endl;
+	}
 	}
 	
 	/* Protect the newly-created textures: */
