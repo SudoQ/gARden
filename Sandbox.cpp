@@ -974,6 +974,7 @@ void Sandbox::display(GLContextData& contextData) const
 		// TODO Make some changes to the vegetationImage
 
 		// Bind vegetation texture
+		waterTable->bindVegetationTexture(contextData);
 
 		// Store to texture
 		glTexImage2D(GL_TEXTURE_RECTAGLE_ARB, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, vegetationImage);

@@ -101,7 +101,7 @@ Methods of class WaterTable2::DataItem:
 **************************************/
 
 WaterTable2::DataItem::DataItem(void)
-	:quantityTextureObject(0),derivativeTextureObject(0),quantityStarTextureObject(0),waterTextureObject(0),
+	:quantityTextureObject(0),derivativeTextureObject(0),quantityStarTextureObject(0),waterTextureObject(0),vegetationTextureObject(0),
 	 bathymetryFramebufferObject(0),derivativeFramebufferObject(0),maxStepSizeFramebufferObject(0),integrationFramebufferObject(0),waterFramebufferObject(0),
 	 bathymetryShader(0),derivativeShader(0),maxStepSizeShader(0),boundaryShader(0),eulerStepShader(0),rungeKuttaStepShader(0),waterAddShader(0),waterShader(0)
 	{
@@ -143,6 +143,7 @@ WaterTable2::DataItem::~DataItem(void)
 	glDeleteTextures(2,maxStepSizeTextureObjects);
 	glDeleteTextures(1,&quantityStarTextureObject);
 	glDeleteTextures(1,&waterTextureObject);
+	glDeleteTextures(1,&vegetationTextureObject);
 	glDeleteFramebuffersEXT(1,&bathymetryFramebufferObject);
 	glDeleteFramebuffersEXT(1,&derivativeFramebufferObject);
 	glDeleteFramebuffersEXT(1,&maxStepSizeFramebufferObject);
@@ -422,6 +423,19 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	GLfloat* w=makeBuffer(size[0],size[1],1,0.0);
 	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_LUMINANCE,GL_FLOAT,w);
 	delete[] w;
+	}
+
+	{
+	/* Create the vegetation texture */
+	glGenTextures(1,&dataItem->vegetationTextureObject);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_T,GL_CLAMP);
+	GLfloat* v=makeBuffer(size[0],size[1],1,0.0);
+	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,v);
+	delete[] v;
 	}
 	
 	/* Protect the newly-created textures: */
@@ -1073,4 +1087,13 @@ void WaterTable2::bindQuantityTexture(GLContextData& contextData) const
 	
 	/* Bind the conserved quantities texture: */
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->quantityTextureObject);
+	}
+
+void WaterTable2::bindVegetationTexture(GLContextData& contextData) const 
+	{
+	/* Get the data item: */
+	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
+
+	/* Bind the conserved quantities texture: */
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	}

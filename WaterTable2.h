@@ -83,6 +83,8 @@ class WaterTable2:public GLObject
 		GLint waterAddShaderUniformLocations[2];
 		GLhandleARB waterShader; // Shader to add or remove water from the conserved quantities grid
 		GLint waterShaderUniformLocations[3];
+
+		GLuint vegetationTextureObject;
 		
 		/* Constructors and destructors: */
 		DataItem(void);
@@ -137,6 +139,7 @@ class WaterTable2:public GLObject
 	GLfloat runSimulationStep(GLContextData& contextData) const; // Runs a water flow simulation step; returns step size taken by Runge-Kutta integration step
 	void bindBathymetryTexture(GLContextData& contextData) const; // Binds the bathymetry texture object to the active texture unit
 	void bindQuantityTexture(GLContextData& contextData) const; // Binds the most recent conserved quantities texture object to the active texture unit
+	void bindVegetationTexture(GLContextData& contextData) const; // Binds the vegetation texture
 	const GLfloat* getWaterTextureMatrix(void) const // Returns the matrix transforming from camera space into water texture space
 		{
 		return waterTextureMatrix;
