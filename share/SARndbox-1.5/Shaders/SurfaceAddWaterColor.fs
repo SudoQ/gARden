@@ -136,6 +136,7 @@ float turb(in vec3 pos)
 	return result;
 	}
 
+
 /**********************
 Water shading function:
 **********************/
@@ -151,6 +152,15 @@ varying vec2 waterLevelTexCoord; // Texture coordinate for water level texture
 Water shading function using a one-component water level texture and
 fixed texture coordinates:
 ***********************************************************************/
+
+float getWaterLevel(in vec2 texCoord) {
+	float b=(texture2DRect(bathymetrySampler,vec2(texCoord.x-1.0,texCoord.y-1.0)).r+
+	         texture2DRect(bathymetrySampler,vec2(texCoord.x,texCoord.y-1.0)).r+
+	         texture2DRect(bathymetrySampler,vec2(texCoord.x-1.0,texCoord.y)).r+
+	         texture2DRect(bathymetrySampler,texCoord.xy).r)*0.25;
+	float waterLevel=texture2DRect(quantitySampler,texCoord).r-b;
+	return waterLevel;
+}
 
 void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 	{
@@ -182,9 +192,8 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 		/* Mix the water color with the base surface color based on the water level: */
 		baseColor=mix(baseColor,waterColor,min(waterLevel*waterOpacity,1.0));
 		} else {
-		// Not under water, add vegetation
-		float g = 1.0;
-		baseColor = vec4(0.0, g, 0.0, 1.0);
+			// Not under water, add vegetation
+			addVegetationColor(baseColor);
 		}
 	}
 
@@ -219,3 +228,42 @@ void addWaterColorAdvected(inout vec4 baseColor)
 		}
 	#endif
 	}
+
+void addVegetationColor(inout vec4 baseColor) {
+	// Sum the nearby water quantities / water levels
+	// Average
+	// Calculate color
+	float waterQ = getWaterLevel(waterLevelTexCoord);
+	float hydration = 0.0;
+	int num = 0;	
+	for(float i = -0.05; i < 0.05; i=i+0.01){
+			for(float j = -0.05; j < 0.05; j=j+0.01){
+					float dx = waterLevelTexCoord.x+i
+					float dy = waterLevelTexCoord.y+j
+
+					hydration = hydration + getWaterLevel(vec2(dx, dy))
+					num++;
+			}
+	}
+	hydration = hydration/num; // Average
+	
+	float vegetation = 0.0;
+	float growth = 0.25;
+	float decay = 0.75;
+	float top = 0.5;
+	
+	float k1 = 1.0/(top-growth);
+	float k2 = 1.0/(top-decay);
+	float m1 = 1.0 - top*k1;
+	float m2 = 1.0 - top*k2;
+	
+	if (hydration > growth && hydration <= top){
+			vegetation = k1 * hydration + m1;
+	} else if (hydration > top && hydration <= decay){
+			vegetation = k2 * hydration + m2;
+	}
+
+	float g = vegetation;
+
+	baseColor.g = g; // Only change the green
+}
