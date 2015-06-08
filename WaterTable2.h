@@ -143,4 +143,12 @@ class WaterTable2:public GLObject
 		}
 	};
 
+	const GLsizei getWidth() const {
+		return size[0];
+	}
+
+	const GLsizei getHeight() const {
+		return size[1];
+	}
+
 #endif

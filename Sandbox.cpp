@@ -949,15 +949,44 @@ void Sandbox::display(GLContextData& contextData) const
 			}
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
-		waterTable->updateVegetationTexture(contextData);
-		/*	
+		
 		waterTable->bindQuantityTexture();
+		//waterTable->updateVegetation();
 		GLsizei width = waterTable->getWidth();
 		GLsizei height = waterTable->getHeight();
-		GLfloat* waterQuantityImage = new GLfloat[width*height];
-		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, GL_FLOAT, waterQuantityImage) // Get the water quantity texture
+		GLfloat* waterQuantityImage = new GLfloat[width*height*3]; // RGB
+		GLfloat* vegetationImage = new GLfloat[width*height]; // R
+
+		// Load water quantity texture to image
+		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, GL_FLOAT, waterQuantityImage);
+
+		// Read any errors
+		GLenum err;
+		while((err = glGetError()) != GL_NO_ERROR) {
+			std::cerr << "OpenGL error: " << err << std::endl;
+		}
+
+		// Convert to one-component R instead of three-component RGB
+		for(int i=0; i<(width*height); ++i){
+			vegetationImage[i] = waterQuantityImage[i*3];
+		}
+
+		// TODO Make some changes to the vegetationImage
+
+		// Bind vegetation texture
+
+		// Store to texture
+		glTexImage2D(GL_TEXTURE_RECTAGLE_ARB, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, vegetationImage);
+
+		// Read any errors
+		GLenum err;
+		while((err = glGetError()) != GL_NO_ERROR) {
+			std::cerr << "OpenGL error: " << err << std::endl;
+		}
+
+		// Clean up
 		delete waterQuantityImage;
-		*/
+		delete vegetationImage;
 		}
 	
 	if(fixProjectorView)
