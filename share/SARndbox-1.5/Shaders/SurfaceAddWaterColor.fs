@@ -142,6 +142,8 @@ Water shading function:
 
 uniform sampler2DRect bathymetrySampler;
 uniform sampler2DRect quantitySampler;
+uniform sampler2DRect vegetationSampler;
+
 uniform float waterOpacity;
 uniform float waterAnimationTime;
 
@@ -182,6 +184,7 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 		/* Mix the water color with the base surface color based on the water level: */
 		baseColor=mix(baseColor,waterColor,min(waterLevel*waterOpacity,1.0));
 		} else {
+		// TODO Use the vegetation sampler
 		// Not under water, add vegetation
 		float g = 1.0;
 		baseColor = vec4(0.0, g, 0.0, 1.0);
