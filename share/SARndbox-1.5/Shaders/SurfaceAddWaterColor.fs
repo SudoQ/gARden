@@ -280,8 +280,6 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 			// Not under water, add vegetation
 			#if 0
 			addVegetationColor(baseColor); // More advanced vegetation coloring
-			#elif 0
-			addVegetationColor(baseColor);
 			#else
 			baseColor.g = 1.0; // All non water is green!
 			#endif
