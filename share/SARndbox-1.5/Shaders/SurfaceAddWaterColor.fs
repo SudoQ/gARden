@@ -160,9 +160,7 @@ float getWaterLevel(in vec2 texCoord) {
 /**********************
 Vegetation color shader
 ***********************/
-
 void addVegetationColor(inout vec4 baseColor) {
-	float waterQ = getWaterLevel(waterLevelTexCoord);
 	float hydration = 0.0;
 	int num = 0;	
 	for(float i = -0.05; i < 0.05; i=i+0.01){
@@ -170,16 +168,22 @@ void addVegetationColor(inout vec4 baseColor) {
 					float dx = waterLevelTexCoord.x+i;
 					float dy = waterLevelTexCoord.y+j;
 
-					hydration = hydration + getWaterLevel(vec2(dx, dy));
+					//hydration = hydration + getWaterLevel(vec2(dx, dy));
+
+					// Get the water quantity
+					hydration = hydration + texture2DRect(quantitySampler,vec2(dx,dy)).r;
+
 					num++;
 			}
 	}
 	hydration = hydration/num; // Average
-	
+
+	// Adjust these parameters
+	/*
 	float vegetation = 0.0;
 	float growth = 0.25;
-	float decay = 0.75;
-	float top = 0.5;
+	float decay = 0.75;    
+	float top = ((decay-growth)/2.0)+growth;
 	
 	float k1 = 1.0/(top-growth);
 	float k2 = 1.0/(top-decay);
@@ -191,10 +195,51 @@ void addVegetationColor(inout vec4 baseColor) {
 	} else if (hydration > top && hydration <= decay){
 			vegetation = k2 * hydration + m2;
 	}
-
-	float g = vegetation;
+	*/
+	float g = linearVegetation(hydration); // Linear vegetation function
+	//float g = logisticVegetation(hydration); // Logistic vegetation function, S-curves
 
 	baseColor.g = g; // Only change the green
+}
+
+float linearVegetation(in float hydration) {
+	float vegetation = 0.0;
+	float growth = 0.25;
+	float decay = 0.75;    
+	float top = ((decay-growth)/2.0)+growth;
+	
+	float k1 = 1.0/(top-growth);
+	float k2 = 1.0/(top-decay);
+	float m1 = 1.0 - top*k1;
+	float m2 = 1.0 - top*k2;
+	
+	if (hydration > growth && hydration <= top){
+			vegetation = k1 * hydration + m1;
+	} else if (hydration > top && hydration <= decay){
+			vegetation = k2 * hydration + m2;
+	}
+	return vegetation;
+}
+
+float logisticVegetation(in float hydration) {
+		/*
+		Growth
+		f(x) = 1/(1+e^(-k*(x-0.3)))
+		Decay
+		f(x) = 1/(1+e^(k*(x-0.7)))
+		*/
+    float vegetation = 0.0;
+    float growth = 0.3;
+    float decay = 0.7;
+    float top = ((decay-growth)/2.0)+growth;
+    float k = 24.0; // Steepness
+    
+    if (hydration > growth && hydration <= top){
+        vegetation = 1.0/(1.0+exp(-1.0*k*(hydration-growth)));
+    } else if (hydration > top && hydration <= decay){
+        vegetation = 1.0/(1.0+exp(k*(hydration-decay)));
+    }
+		return vegetation;
 }
 
 /***********************************************************************
@@ -235,6 +280,8 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 			// Not under water, add vegetation
 			#if 0
 			addVegetationColor(baseColor); // More advanced vegetation coloring
+			#elif 0
+			addVegetationColor(baseColor);
 			#else
 			baseColor.g = 1.0; // All non water is green!
 			#endif
