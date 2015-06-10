@@ -163,6 +163,11 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 	         texture2DRect(bathymetrySampler,waterLevelTexCoord.xy).r)*0.25;
 	float waterLevel=texture2DRect(quantitySampler,waterLevelTexCoord).r-b;
 	
+	float g = texture2DRect(vegetationSampler, waterLevelTexCoord).r;
+
+	if(g > 0.0){
+		baseColor=mix(baseColor, vec4(0.0, g, 0.0, 1.0), 1.0);
+	}
 	/* Check if the surface is under water: */
 	if(waterLevel>0.0)
 		{
@@ -180,14 +185,11 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 		vec4 waterColor=vec4(colorW,colorW,1.0,1.0); // Water
 		// vec4 waterColor=vec4(1.0-colorW,1.0-colorW*2.0,0.0,1.0); // Lava
 		// vec4 waterColor=vec4(0.0,0.0,1.0,1.0); // Blue
-		
+	
+		//baseColor = mix(baseColor, vec4(0.0, 1.0, 0.0, 1.0), 1.0);
+
 		/* Mix the water color with the base surface color based on the water level: */
 		baseColor=mix(baseColor,waterColor,min(waterLevel*waterOpacity,1.0));
-		} else {
-		// TODO Use the vegetation sampler
-		// Not under water, add vegetation
-		float g = 1.0;
-		baseColor = vec4(0.0, g, 0.0, 1.0);
 		}
 	}
 
