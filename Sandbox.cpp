@@ -965,68 +965,67 @@ void Sandbox::display(GLContextData& contextData) const
 		while((err = glGetError()) != GL_NO_ERROR) {
 			std::cerr << "OpenGL error: " << err << std::endl;
 		}
-		float maxqq = -10000.0;
-		float minqq = 10000.0;
-		float tot = 0.0;
 
-		float minq = 0.0;
-		float maxq = 20.0;
-		float vegetation = 0.0;
-		float range = maxq - minq;
-		// Convert to one-component R instead of three-component RGB
-		for(int i=0; i<(width*height); ++i){
-			float q = waterQuantityImage[i*3+1];
-			float qx = 0.0;
-			if (q < -1 || q > 1){
-				qx=1.0;
-			}
-			tot += qx;
-			if (qx > 0.0) {
-				vegetation = 255.0;
-			} else {
-				vegetation = 0.0;
-			}
-			if (q>maxqq) {
-				maxqq = q;
-			}
-			if (q<minqq) {
-				minqq = q;
-			}
-			/*
-			if (q < minq) {
-				vegetation = 0.0;
-			} else if (q > minq+(range*0.5)) {
-				vegetation = 255;
-			//} else if (q < minq+(range*0.2)) {
-			//	vegetation = 255;
-			} else {
-				vegetation = 0;
-			}
-			*/
-			/*
-			float hydration = q;
-			
-			//vegetationImage[i] = 255.0-elem;
-			float vegetation = 0.0;
-			float growth = 0.25;
-			float decay = 0.75;
-			float top = ((decay-growth)/2.0)+growth;
+		for(int w=0; w<width; ++w){
+			for(int h=0; h<height; ++h){
 
-			float k1 = 1.0/(top-growth);
-			float k2 = 1.0/(top-decay);
-			float m1 = 1.0 - top*k1;
-			float m2 = 1.0 - top*k2;
+				// TODO Check for water here as well? Continue if so?
+				float n = 0.0;
+				float hydration = 0.0;
+				float range = 0.1;
+				float start = -1*(range/2.0);
+				float end = range/2.0;
+				float steps = 20.0;
+				float step = range/steps;
 
-			if (hydration > growth && hydration <= top){
-				vegetation = k1 * hydration + m1;
-			} else if (hydration > top && hydration <= decay){
-				vegetation = k2 * hydration + m2;
-			}*/
-			vegetationImage[i] = vegetation;
+				// Search the surronding pixels for water
+				for(float i=start; i<end; i+=step){
+					int dw = w+static_cast<int>(i*width);			
+					if(dw < 0 || dw > width){
+						continue;
+					}
+					for(float j=start; j<end; j+=step){
+						n++;
+						int dh = h+static_cast<int>(j*width);			
+						if(dh < 0 || dh > height){
+							continue;
+						}
+					
+						// Convert to array index
+						int k = (dh*width)+dw;
+						float hFlux = waterQuantityImage[k*3+1];
+						float vFlux = waterQuantityImage[k*3+2];
+						
+						// Water detection
+						float water = 0.0;
+						if (hFlux < -1.0 || hFlux > 1.0){
+							water = 1.0;
+						}
+						hydration += water;
+					}
+				}
+				hydration = hydration/n; // The average water coverage
+
+				// Hydration to vegetation value
+				float vegetation = 0.0;
+				float growth = 0.1;
+				float decay = 0.9;
+				float top = ((decay-growth)/2.0)+growth;
+
+				float k1 = 1.0/(top-growth);
+				float k2 = 1.0/(top-decay);
+				float m1 = 1.0 - top*k1;
+				float m2 = 1.0 - top*k2;
+
+				if (hydration > growth && hydration <= top){
+					vegetation = k1 * hydration + m1;
+				} else if (hydration > top && hydration <= decay){
+					vegetation = k2 * hydration + m2;
+				}
+
+				vegetationImage[(h*width)+w] = vegetation;
+			}
 		}
-		printf("%f - %f; %f\n", minqq, maxqq, tot/(width*height));
-
-		// TODO Make some changes to the vegetationImage
 
 		// Bind vegetation texture
 		waterTable->bindVegetationTexture(contextData);
