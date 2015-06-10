@@ -1102,3 +1102,10 @@ void WaterTable2::bindVegetationTexture(GLContextData& contextData) const
 	/* Bind the conserved quantities texture: */
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->vegetationTextureObject);
 	}
+void WaterTable2::bindWaterTexture(GLContextData& contextData) const {
+	/* Get the data item: */
+	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
+
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->waterTextureObject);
+	}
+
