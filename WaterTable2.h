@@ -140,18 +140,19 @@ class WaterTable2:public GLObject
 	void bindBathymetryTexture(GLContextData& contextData) const; // Binds the bathymetry texture object to the active texture unit
 	void bindQuantityTexture(GLContextData& contextData) const; // Binds the most recent conserved quantities texture object to the active texture unit
 	void bindVegetationTexture(GLContextData& contextData) const; // Binds the vegetation texture
+	void bindWaterTexture(GLContextData& contextData) const;
 	const GLfloat* getWaterTextureMatrix(void) const // Returns the matrix transforming from camera space into water texture space
 		{
 		return waterTextureMatrix;
 		}
+		const GLsizei getWidth(void) {
+			return size[0];
+		}
+
+		const GLsizei getHeight(void) {
+			return size[1];
+		}
 	};
 
-	const GLsizei getWidth() const {
-		return size[0];
-	}
-
-	const GLsizei getHeight() const {
-		return size[1];
-	}
 
 #endif
