@@ -950,32 +950,63 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
-		waterTable->bindQuantityTexture(contextData);
 		//waterTable->updateVegetation();
 		GLsizei width = waterTable->getWidth();
 		GLsizei height = waterTable->getHeight();
 		GLfloat* waterQuantityImage = new GLfloat[width*height*3]; // RGB
+		GLfloat* bathymetryImage = new GLfloat[width*height]; // R
+		GLfloat* waterLevelImage = new GLfloat[width*height]; // R
 		GLfloat* vegetationImage = new GLfloat[width*height]; // R
 
 		// Load water quantity texture to image
+		waterTable->bindQuantityTexture(contextData);
 		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, GL_FLOAT, waterQuantityImage);
+
+		waterTable->bindBathymetryTexture(contextData);
+		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_LUMINANCE, GL_FLOAT, bathymetryImage);
 
 		// Read any errors
 		GLenum err;
 		while((err = glGetError()) != GL_NO_ERROR) {
 			std::cerr << "OpenGL error: " << err << std::endl;
 		}
-
+		for(int w=0; w<width; ++w){
+			for(int h=0; h<height; ++h){
+				int k = h*width+w;
+				//float b = 0.0;
+				/*
+				for(int ww = -1.0; ww < 1.0; ++ww){
+					for(int hh = -1.0; hh < 1.0; ++hh){
+						n++;
+						int dw = w+ww;
+						int dh = h+hh;
+						if(dw < 0 || dw > width){
+							continue;
+						}
+						if(dh < 0 || dh > height){
+							continue;
+						}
+						int m = dh*width+dw;
+						b += bathymetryImage[m];
+					}
+				}
+				b = b/n;
+				*/
+				float b = bathymetryImage[k];
+				float q = waterQuantityImage[k*3+0];
+				waterLevelImage[k] = q-b;
+			}
+		}
 		for(int w=0; w<width; ++w){
 			for(int h=0; h<height; ++h){
 
 				// TODO Check for water here as well? Continue if so?
 				float n = 0.0;
 				float hydration = 0.0;
-				float range = 0.1;
+				float range = 0.05;
 				float start = -1*(range/2.0);
 				float end = range/2.0;
-				float steps = 20.0;
+				float steps = 5.0;
 				float step = range/steps;
 
 				// Search the surronding pixels for water
@@ -990,17 +1021,29 @@ void Sandbox::display(GLContextData& contextData) const
 						if(dh < 0 || dh > height){
 							continue;
 						}
-					
+						/*	
+						float b=(texture2DRect(bathymetrySampler,vec2(waterLevelTexCoord.x-1.0,waterLevelTexCoord.y-1.0)).r+
+								texture2DRect(bathymetrySampler,vec2(waterLevelTexCoord.x,waterLevelTexCoord.y-1.0)).r+
+								texture2DRect(bathymetrySampler,vec2(waterLevelTexCoord.x-1.0,waterLevelTexCoord.y)).r+
+								texture2DRect(bathymetrySampler,waterLevelTexCoord.xy).r)*0.25;
+						float waterLevel=texture2DRect(quantitySampler,waterLevelTexCoord).r-b;
+						*/
 						// Convert to array index
 						int k = (dh*width)+dw;
+						float waterLevel = waterLevelImage[k];
+						float q = waterQuantityImage[k*3+0];
 						float hFlux = waterQuantityImage[k*3+1];
 						float vFlux = waterQuantityImage[k*3+2];
-						
+							
 						// Water detection
 						float water = 0.0;
-						if (hFlux < -1.0 || hFlux > 1.0){
+						float flux = sqrt((hFlux * hFlux) + (vFlux * vFlux));
+						float b = bathymetryImage[k];
+
+						if (flux > 2.0){
 							water = 1.0;
 						}
+						
 						hydration += water;
 					}
 				}
@@ -1008,8 +1051,8 @@ void Sandbox::display(GLContextData& contextData) const
 
 				// Hydration to vegetation value
 				float vegetation = 0.0;
-				float growth = 0.1;
-				float decay = 0.9;
+				float growth = 0.0;
+				float decay = 1.0;
 				float top = ((decay-growth)/2.0)+growth;
 
 				float k1 = 1.0/(top-growth);
@@ -1026,7 +1069,6 @@ void Sandbox::display(GLContextData& contextData) const
 				vegetationImage[(h*width)+w] = vegetation;
 			}
 		}
-
 		// Bind vegetation texture
 		waterTable->bindVegetationTexture(contextData);
 
@@ -1043,6 +1085,8 @@ void Sandbox::display(GLContextData& contextData) const
 		// Clean up
 		delete waterQuantityImage;
 		delete vegetationImage;
+		delete waterLevelImage;
+		delete bathymetryImage;
 		}
 	
 	if(fixProjectorView)
