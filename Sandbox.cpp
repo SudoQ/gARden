@@ -950,7 +950,7 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
-		waterTable->bindQuantityTexture();
+		waterTable->bindQuantityTexture(contextData);
 		//waterTable->updateVegetation();
 		GLsizei width = waterTable->getWidth();
 		GLsizei height = waterTable->getHeight();
@@ -965,22 +965,78 @@ void Sandbox::display(GLContextData& contextData) const
 		while((err = glGetError()) != GL_NO_ERROR) {
 			std::cerr << "OpenGL error: " << err << std::endl;
 		}
+		float maxqq = -10000.0;
+		float minqq = 10000.0;
+		float tot = 0.0;
 
+		float minq = 0.0;
+		float maxq = 20.0;
+		float vegetation = 0.0;
+		float range = maxq - minq;
 		// Convert to one-component R instead of three-component RGB
 		for(int i=0; i<(width*height); ++i){
-			vegetationImage[i] = waterQuantityImage[i*3];
+			float q = waterQuantityImage[i*3+1];
+			float qx = 0.0;
+			if (q < -1 || q > 1){
+				qx=1.0;
+			}
+			tot += qx;
+			if (qx > 0.0) {
+				vegetation = 255.0;
+			} else {
+				vegetation = 0.0;
+			}
+			if (q>maxqq) {
+				maxqq = q;
+			}
+			if (q<minqq) {
+				minqq = q;
+			}
+			/*
+			if (q < minq) {
+				vegetation = 0.0;
+			} else if (q > minq+(range*0.5)) {
+				vegetation = 255;
+			//} else if (q < minq+(range*0.2)) {
+			//	vegetation = 255;
+			} else {
+				vegetation = 0;
+			}
+			*/
+			/*
+			float hydration = q;
+			
+			//vegetationImage[i] = 255.0-elem;
+			float vegetation = 0.0;
+			float growth = 0.25;
+			float decay = 0.75;
+			float top = ((decay-growth)/2.0)+growth;
+
+			float k1 = 1.0/(top-growth);
+			float k2 = 1.0/(top-decay);
+			float m1 = 1.0 - top*k1;
+			float m2 = 1.0 - top*k2;
+
+			if (hydration > growth && hydration <= top){
+				vegetation = k1 * hydration + m1;
+			} else if (hydration > top && hydration <= decay){
+				vegetation = k2 * hydration + m2;
+			}*/
+			vegetationImage[i] = vegetation;
 		}
+		printf("%f - %f; %f\n", minqq, maxqq, tot/(width*height));
 
 		// TODO Make some changes to the vegetationImage
 
 		// Bind vegetation texture
 		waterTable->bindVegetationTexture(contextData);
 
+		
 		// Store to texture
-		glTexImage2D(GL_TEXTURE_RECTAGLE_ARB, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, vegetationImage);
+		glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, vegetationImage);
 
 		// Read any errors
-		GLenum err;
+		//GLenum err;
 		while((err = glGetError()) != GL_NO_ERROR) {
 			std::cerr << "OpenGL error: " << err << std::endl;
 		}
