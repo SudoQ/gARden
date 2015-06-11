@@ -85,6 +85,7 @@ class WaterTable2:public GLObject
 		GLint waterShaderUniformLocations[3];
 
 		GLuint vegetationTextureObject;
+		GLuint hydrationTextureObject;
 		
 		/* Constructors and destructors: */
 		DataItem(void);
@@ -141,6 +142,8 @@ class WaterTable2:public GLObject
 	void bindQuantityTexture(GLContextData& contextData) const; // Binds the most recent conserved quantities texture object to the active texture unit
 	void bindVegetationTexture(GLContextData& contextData) const; // Binds the vegetation texture
 	void bindWaterTexture(GLContextData& contextData) const;
+	void bindDerivativeTexture(GLContextData& contextDat) const;
+	void bindHydrationTexture(GLContextData& contextDat) const;
 	const GLfloat* getWaterTextureMatrix(void) const // Returns the matrix transforming from camera space into water texture space
 		{
 		return waterTextureMatrix;
