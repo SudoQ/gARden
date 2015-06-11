@@ -978,7 +978,7 @@ void Sandbox::display(GLContextData& contextData) const
 
 				float n = 0.0;
 				float hydration = 0.0;
-				float range = 0.03;
+				float range = 0.1;
 				float start = -1*(range/2.0);
 				float end = range/2.0;
 				float steps = 5.0;
