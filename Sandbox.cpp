@@ -950,9 +950,9 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
-		waterTable->runVegetationSimulation(contextData);
-		//waterTable->updateHydration(contextData);
-		//waterTable->updateVegetation(contextData);
+		//waterTable->runVegetationSimulation(contextData);
+		waterTable->updateHydration(contextData);
+		waterTable->updateVegetation(contextData);
 		GLenum err;
 		while((err = glGetError()) != GL_NO_ERROR) {
 			std::cerr << "OpenGL error: " << err << std::endl;

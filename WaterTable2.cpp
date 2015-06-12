@@ -1148,14 +1148,21 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glPushAttrib(GL_COLOR_BUFFER_BIT|GL_VIEWPORT_BIT);
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0,double(size[0]),0.0,double(size[1]),-1.0,1.0); // Set projection matrix for pixel-coordinate rendering
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
 
 	/* Set up the hydration vegetation frame buffer: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->hydrationFramebufferObject);
 	//glDrawBuffer(GL_COLOR_ATTACHMENT1_EXT);
-	glViewport(0,0,size[0],size[1]);
+	//glViewport(0,0,size[0],size[1]);
 	//glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->integrationFramebufferObject);
 	//glDrawBuffer(GL_COLOR_ATTACHMENT1_EXT);
-	//glViewport(0,0,size[0],size[1]);
+	glViewport(0,0,size[0],size[1]);
 	
 	glUseProgramObjectARB(dataItem->hydrationShader);
 	glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -1167,6 +1174,7 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glVertex2i(size[0],0);
 	glVertex2i(size[0],size[1]);
 	glVertex2i(0,size[1]);
+
 	glEnd();
 	
 	GLenum err;
@@ -1184,12 +1192,10 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
 	
 	/* Restore OpenGL matrices: */
-	/*
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-	*/
 	
 	/* Restore OpenGL state: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
@@ -1203,6 +1209,14 @@ void WaterTable2::updateVegetation(GLContextData& contextData) const {
 	glPushAttrib(GL_COLOR_BUFFER_BIT|GL_VIEWPORT_BIT);
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0,double(size[0]),0.0,double(size[1]),-1.0,1.0); // Set projection matrix for pixel-coordinate rendering
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
 
 	/* Set up the vegetation framebuffer */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->vegetationFramebufferObject);
@@ -1235,12 +1249,11 @@ void WaterTable2::updateVegetation(GLContextData& contextData) const {
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
 	
 	/* Restore OpenGL matrices: */
-	/*
+	
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-	*/
 	
 	/* Restore OpenGL state: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
