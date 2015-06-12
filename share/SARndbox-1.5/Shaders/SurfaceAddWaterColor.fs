@@ -168,8 +168,10 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 	//baseColor=mix(baseColor, vec4(237.0/255.0, 201.0/255.0, 175.0/255.0, 1.0), 0.5);
 	baseColor=mix(baseColor, vec4(232.0/255.0, 215.0/255.0, 125.0/255.0, 1.0), 0.8);
 	//baseColor=mix(baseColor, vec4(232.0/255.0, 215.0/255.0, 0.0/255.0, 1.0), 0.5);
+	
 	if(veg > 0.0){
 		vec4 vegColor;
+		/*
 		if (veg < 0.25) {
 			vegColor = vec4(0.0, 0.5, 0.0, 1.0);
 		} else if (veg < 0.75) {
@@ -177,7 +179,8 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 		} else {
 			vegColor = vec4(0.0, 0.5, 0.0, 1.0);
 		}
-
+		*/
+		vegColor = vec4(0.0, 1.0, 0.0, 1.0);
 		baseColor=mix(baseColor, vegColor, 1.0);
 	}
 	/* Check if the surface is under water: */

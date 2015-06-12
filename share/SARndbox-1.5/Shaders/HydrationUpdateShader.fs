@@ -25,25 +25,21 @@ uniform sampler2DRect derivativeSampler;
 
 void main()
 	{
-	//vec3 qt=texture2DRect(derivativeSampler,gl_FragCoord.xy).rgb;
-	
 	float n = 0.0;
 	float hydration = 0.0;
-	float range = 0.1;
-	float start = -1*(range/2.0);
-	float end = range/2.0;
-	float steps = 10.0;
-	float step = range/steps;
-
 	// Search the surronding pixels for water
-	for(float i=start; i<end; i+=step){
-		for(float j=start; j<end; j+=step){
+	int range = 80;
+	int start = -1*(range/2);
+	int end = range/2;
+	int step = 1;
+	for(int i=start; i<end; i+=step){
+		for(int j=start; j<end; j+=step){
 			n++;
-			float deriv0 = texture2DRect(derivativeSampler, gl_FragCoord.xy).r;
+			float deriv0 = texture2DRect(derivativeSampler, vec2(gl_FragCoord.x+i, gl_FragCoord.y+j)).r;
 			float water = 0.0;
 				
 			// Water detection
-			if (abs(deriv0) > 0.01){
+			if (abs(deriv0) > 0.001){
 				water = 1.0;
 			}
 			
@@ -51,9 +47,10 @@ void main()
 		}
 	}
 	hydration = hydration/n; // The average water coverage
-	//float currentHydration = gl_FragColor.r;
-	//float velocity = 0.1;
-	//hydration = velocity*hydration + (1.0-velocity)*currentHydration;
-	//gl_FragColor=vec4(hydration,0.0,0.0,1.0);
+	/*	
+	float currentHydration = gl_FragColor.r;
+	float velocity = 0.4;
+	hydration = velocity*hydration + (1.0-velocity)*currentHydration;
+	*/
 	gl_FragColor=vec4(hydration,0.0,0.0,0.0);
 	}
