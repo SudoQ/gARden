@@ -1009,7 +1009,7 @@ void Sandbox::display(GLContextData& contextData) const
 						float water = 0.0;
 						float flux = sqrt((hFlux * hFlux) + (vFlux * vFlux));
 						
-						if (fabs(deriv0) > 0.01){
+						if (fabs(deriv2) > 0.001){
 							water = 1.0;
 						}
 						
@@ -1018,12 +1018,13 @@ void Sandbox::display(GLContextData& contextData) const
 				}
 				hydration = hydration/n; // The average water coverage
 				float currentHydration = hydrationImage[(h*width+w)];
-				hydration = (hydration + currentHydration)/2;
+				float velocity = 0.1;
+				hydration = velocity*hydration + (1.0-velocity)*currentHydration;
 
 				// Hydration to vegetation value
 				float vegetation = 0.0;
-				float growth = 0.1;
-				float decay = 0.9;
+				float growth = 0.05;
+				float decay = 0.95;
 				float top = ((decay-growth)/2.0)+growth;
 
 				float k1 = 1.0/(top-growth);
