@@ -950,6 +950,56 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
+		waterTable->runVegetationSimulation(contextData);
+		//waterTable->updateHydration(contextData);
+		//waterTable->updateVegetation(contextData);
+		GLenum err;
+		while((err = glGetError()) != GL_NO_ERROR) {
+			std::cerr << "OpenGL error: " << err << std::endl;
+		}
+		GLsizei width = waterTable->getWidth();
+		GLsizei height = waterTable->getHeight();
+		GLfloat* hydrationImage = new GLfloat[width*height]; //R
+		GLfloat* vegetationImage = new GLfloat[width*height]; // R
+		waterTable->bindHydrationTexture(contextData);
+		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RED, GL_FLOAT, hydrationImage);
+		waterTable->bindVegetationTexture(contextData);
+		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RED, GL_FLOAT, vegetationImage);
+		
+		while((err = glGetError()) != GL_NO_ERROR) {
+			std::cerr << "OpenGL error: " << err << std::endl;
+		}
+
+		float maxh = -10000.0;
+		float maxv = -10000.0;
+		float minh = 10000.0;
+		float minv = 10000.0;
+		float avgh = 0;
+		float avgv = 0;
+		int n = 0;
+		for(int w=0; w<width; ++w){
+			for(int h=0; h<height; ++h){
+				int k = h*width+w;
+				n++;
+				float hyd = hydrationImage[k];
+				float veg = vegetationImage[k];
+				maxh = (hyd>maxh?hyd:maxh);
+				maxv = (veg>maxv?veg:maxv);
+				minh = (hyd<minh?hyd:minh);
+				minv = (veg<minv?veg:minv);
+				avgh += hyd;
+				avgv += veg;
+			}
+		}
+		avgh = avgh/n;
+		avgv = avgv/n;
+		printf("Hydration: %f - %f [%f]\tVegetation: %f - %f [%f]\n", minh, maxh, avgh, minv, maxv, avgv);
+
+		delete hydrationImage;
+		delete vegetationImage;
+		
+		// Controll the textures
+		/*
 		//waterTable->updateVegetation();
 		GLsizei width = waterTable->getWidth();
 		GLsizei height = waterTable->getHeight();
@@ -1059,8 +1109,8 @@ void Sandbox::display(GLContextData& contextData) const
 		delete vegetationImage;
 		delete derivativeImage;
 		delete hydrationImage;
+		*/	
 		}
-	
 	if(fixProjectorView)
 		{
 		/* Install the projector transformation: */
