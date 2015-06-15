@@ -949,8 +949,12 @@ void Sandbox::display(GLContextData& contextData) const
 			}
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
+		
+		//waterTable->runVegetationSimulation(contextData);
+		waterTable->updateHydration(contextData);
+		waterTable->updateVegetation(contextData);
+		
 		}
-	
 	if(fixProjectorView)
 		{
 		/* Install the projector transformation: */

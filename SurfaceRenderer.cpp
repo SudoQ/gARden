@@ -426,6 +426,13 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			*(ulPtr++)=glGetUniformLocationARB(result,"quantitySampler");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterOpacity");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterAnimationTime");
+			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
+
+			// Check any errors, just in case
+			GLenum err;
+			while((err = glGetError()) != GL_NO_ERROR) {
+				std::cerr << "OpenGL error: " << err << std::endl;
+			}
 			}
 		}
 	catch(...)
@@ -1092,6 +1099,20 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 		
 		/* Upload the water animation time: */
 		glUniform1fARB(*(ulPtr++),GLfloat(animationTime));
+
+		/* Bind the vegetation texture */
+		glActiveTextureARB(GL_TEXTURE5_ARB);
+		waterTable->bindVegetationTexture(contextData);
+		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glUniform1iARB(*(ulPtr++),5);
+
+		// Check any errors, just in case
+		GLenum err;
+		while((err = glGetError()) != GL_NO_ERROR) {
+			std::cerr << "OpenGL error: " << err << std::endl;
+		}
+
 		}
 	
 	/* Draw the surface: */
@@ -1105,6 +1126,10 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	/* Unbind all textures and buffers: */
 	if(waterTable!=0)
 		{
+		glActiveTextureARB(GL_TEXTURE5_ARB);
+		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
 		glActiveTextureARB(GL_TEXTURE4_ARB);
 		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
@@ -1113,6 +1138,12 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 		glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+
+		// Check any errors, just in case
+		GLenum err;
+		while((err = glGetError()) != GL_NO_ERROR) {
+			std::cerr << "OpenGL error: " << err << std::endl;
+		}
 		}
 	if(drawContourLines)
 		{
