@@ -950,101 +950,11 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
-		waterTable->bindQuantityTexture(contextData);
-		//waterTable->updateVegetation();
-		GLsizei width = waterTable->getWidth();
-		GLsizei height = waterTable->getHeight();
-		GLfloat* waterQuantityImage = new GLfloat[width*height*3]; // RGB
-		GLfloat* vegetationImage = new GLfloat[width*height]; // R
-
-		// Load water quantity texture to image
-		glGetTexImage(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, GL_FLOAT, waterQuantityImage);
-
-		// Read any errors
-		GLenum err;
-		while((err = glGetError()) != GL_NO_ERROR) {
-			std::cerr << "OpenGL error: " << err << std::endl;
-		}
-
-		for(int w=0; w<width; ++w){
-			for(int h=0; h<height; ++h){
-
-				// TODO Check for water here as well? Continue if so?
-				float n = 0.0;
-				float hydration = 0.0;
-				float range = 0.1;
-				float start = -1*(range/2.0);
-				float end = range/2.0;
-				float steps = 20.0;
-				float step = range/steps;
-
-				// Search the surronding pixels for water
-				for(float i=start; i<end; i+=step){
-					int dw = w+static_cast<int>(i*width);			
-					if(dw < 0 || dw > width){
-						continue;
-					}
-					for(float j=start; j<end; j+=step){
-						n++;
-						int dh = h+static_cast<int>(j*width);			
-						if(dh < 0 || dh > height){
-							continue;
-						}
-					
-						// Convert to array index
-						int k = (dh*width)+dw;
-						float hFlux = waterQuantityImage[k*3+1];
-						float vFlux = waterQuantityImage[k*3+2];
-						
-						// Water detection
-						float water = 0.0;
-						if (hFlux < -1.0 || hFlux > 1.0){
-							water = 1.0;
-						}
-						hydration += water;
-					}
-				}
-				hydration = hydration/n; // The average water coverage
-
-				// Hydration to vegetation value
-				float vegetation = 0.0;
-				float growth = 0.1;
-				float decay = 0.9;
-				float top = ((decay-growth)/2.0)+growth;
-
-				float k1 = 1.0/(top-growth);
-				float k2 = 1.0/(top-decay);
-				float m1 = 1.0 - top*k1;
-				float m2 = 1.0 - top*k2;
-
-				if (hydration > growth && hydration <= top){
-					vegetation = k1 * hydration + m1;
-				} else if (hydration > top && hydration <= decay){
-					vegetation = k2 * hydration + m2;
-				}
-
-				vegetationImage[(h*width)+w] = vegetation;
-			}
-		}
-
-		// Bind vegetation texture
-		waterTable->bindVegetationTexture(contextData);
-
+		//waterTable->runVegetationSimulation(contextData);
+		waterTable->updateHydration(contextData);
+		waterTable->updateVegetation(contextData);
 		
-		// Store to texture
-		glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, vegetationImage);
-
-		// Read any errors
-		//GLenum err;
-		while((err = glGetError()) != GL_NO_ERROR) {
-			std::cerr << "OpenGL error: " << err << std::endl;
 		}
-
-		// Clean up
-		delete waterQuantityImage;
-		delete vegetationImage;
-		}
-	
 	if(fixProjectorView)
 		{
 		/* Install the projector transformation: */
