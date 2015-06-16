@@ -96,7 +96,7 @@ class WaterTable2:public GLObject
 		GLint vegetationShaderUniformLocations[1];
 
 		GLhandleARB hydrationShader;
-		GLint hydrationShaderUniformLocations[2];
+		GLint hydrationShaderUniformLocations[1];
 
 		GLhandleARB preservedHydrationShader;
 		GLint preservedHydrationShaderUniformLocations[1];
