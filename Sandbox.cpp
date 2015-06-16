@@ -951,7 +951,6 @@ void Sandbox::display(GLContextData& contextData) const
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
 		//waterTable->runVegetationSimulation(contextData);
-		waterTable->updatePreservedHydration(contextData);
 		waterTable->updateHydration(contextData);
 		waterTable->updateVegetation(contextData);
 		
