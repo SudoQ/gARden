@@ -42,8 +42,8 @@ void main()
 	*/	
 	///*	
 	float vegetation = 0.0;
-	float growth = 0.0;
-	float decay = 1.0;
+	float growth = 0.1;
+	float decay = 0.9;
 	float top = ((decay-growth)/2.0)+growth;
 
 	float k1 = 1.0/(top-growth);
