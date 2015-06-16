@@ -21,37 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #extension GL_ARB_texture_rectangle : enable
 
-uniform sampler2DRect derivativeSampler;
-uniform sampler2DRect preservedHydrationSampler;
+uniform sampler2DRect hydrationSampler;
 
 void main()
 	{
-	float n = 0.0;
-	float maxHydration = 0.0;
-	// Search the surronding pixels for water
-	int range = 80;
-	int start = -1*(range/2);
-	int end = range/2;
-	int step = 1;
-	for(int i=start; i<end; i+=step){
-		for(int j=start; j<end; j+=step){
-			n++;
-			float deriv0 = texture2DRect(derivativeSampler, vec2(gl_FragCoord.x+i, gl_FragCoord.y+j)).r;
-			float water = 0.0;
-				
-			// Water detection
-			if (abs(deriv0) > 0.001){
-				water = 1.0;
-			}
-			
-			maxHydration += water;
-		}
-	}
-	maxHydration = maxHydration/n; // The average water coverage
-	float currentHydration = texture2DRect(preservedHydrationSampler, gl_FragCoord);
-	float velocity = 0.8;
-	float newHydration = currentHydration + (maxHydration - currentHydration)*velocity;
-	
-	
-	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
+	gl_FragColor = texture2DRect(hydrationSampler, gl_FragCoord);
 	}
