@@ -86,15 +86,20 @@ class WaterTable2:public GLObject
 
 		GLuint vegetationTextureObject;
 		GLuint hydrationTextureObject;
+		GLuint prevHydrationTextureObject;
 
 		GLuint vegetationFramebufferObject;
 		GLuint hydrationFramebufferObject;
+		GLuint prevHydrationFramebufferObject;
 
 		GLhandleARB vegetationShader;
 		GLint vegetationShaderUniformLocations[1];
 
 		GLhandleARB hydrationShader;
 		GLint hydrationShaderUniformLocations[1];
+
+		GLhandleARB prevHydrationShader;
+		GLint prevHydrationShaderUniformLocations[1];
 		
 		/* Constructors and destructors: */
 		DataItem(void);
@@ -150,12 +155,14 @@ class WaterTable2:public GLObject
 	void runVegetationSimulation(GLContextData& contextData) const;
 	void updateVegetation(GLContextData& contextData) const;
 	void updateHydration(GLContextData& contextData) const;
+	void updatePrevHydration(GLContextData& contextData) const;
 	void bindBathymetryTexture(GLContextData& contextData) const; // Binds the bathymetry texture object to the active texture unit
 	void bindQuantityTexture(GLContextData& contextData) const; // Binds the most recent conserved quantities texture object to the active texture unit
 	void bindVegetationTexture(GLContextData& contextData) const; // Binds the vegetation texture
 	void bindWaterTexture(GLContextData& contextData) const;
-	void bindDerivativeTexture(GLContextData& contextDat) const;
-	void bindHydrationTexture(GLContextData& contextDat) const;
+	void bindDerivativeTexture(GLContextData& contextData) const;
+	void bindHydrationTexture(GLContextData& contextData) const;
+	void bindPrevHydrationTexture(GLContextData& contextData) const;
 	const GLfloat* getWaterTextureMatrix(void) const // Returns the matrix transforming from camera space into water texture space
 		{
 		return waterTextureMatrix;
