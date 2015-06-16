@@ -27,7 +27,7 @@ void main()
 	{
 	float hydration=texture2DRect(hydrationSampler, gl_FragCoord.xy).r;
 	// Hydration to vegetation value
-	
+	/*	
 	float vegetation = 0.0;
 	float growth = 0.3;
 	float decay = 0.7;
@@ -39,8 +39,8 @@ void main()
 	} else if (hydration > top && hydration <= decay){
 			vegetation = 1.0/(1.0+exp(k*(hydration-decay)));
 	}
-	
-	/*	
+	*/	
+	///*	
 	float vegetation = 0.0;
 	float growth = 0.0;
 	float decay = 1.0;
@@ -57,7 +57,7 @@ void main()
 	} else if (hydration > top && hydration < decay){
 		vegetation = k2 * hydration + m2;
 	}
-	*/
+	//*/	
 	
 	gl_FragColor=vec4(vegetation,0.0,0.0,0.0);
 	}

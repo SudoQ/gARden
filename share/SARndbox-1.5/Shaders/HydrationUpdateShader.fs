@@ -48,7 +48,7 @@ void main()
 	}
 	maxHydration = maxHydration/n; // The average water coverage
 	float currentHydration = gl_FragColor.r;
-	float k = 0.15;
+	float velocity = 0.1;
 	float newHydration = currentHydration + (maxHydration - currentHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
