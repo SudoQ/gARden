@@ -476,9 +476,9 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_T,GL_CLAMP);
-	GLfloat* h=makeBuffer(size[0],size[1],1,0.0);
-	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,h);
-	delete[] h;
+	GLfloat* p=makeBuffer(size[0],size[1],1,0.0);
+	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,p);
+	delete[] p;
 	// Check any errors, just in case
 	GLenum err;
 	while((err = glGetError()) != GL_NO_ERROR) {
@@ -573,7 +573,8 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	/* Attach the hydration texture to the hydration frame buffer */
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject,0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-	glReadBuffer(GL_NONE);
+	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
+	//glReadBuffer(GL_NONE);
 	}
 
 	{
@@ -583,8 +584,11 @@ void WaterTable2::initContext(GLContextData& contextData) const
 
 	/* Attach the preservedHydration texture to the preservedHydration frame buffer */
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->preservedHydrationTextureObject,0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+	//glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+	glDrawBuffer(GL_NONE);
+	//glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	glReadBuffer(GL_NONE);
+	//glReadBuffer(GL_NONE);
 	}
 
 	
