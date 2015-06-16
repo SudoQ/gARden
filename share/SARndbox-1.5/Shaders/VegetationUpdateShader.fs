@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #extension GL_ARB_texture_rectangle : enable
 
-uniform sampler2DRect maxHydrationSampler;
+uniform sampler2DRect hydrationSampler;
 
 void main()
 	{
-	float hydration=texture2DRect(maxHydrationSampler, gl_FragCoord.xy).r;
+	float hydration=texture2DRect(hydrationSampler, gl_FragCoord.xy).r;
 	// Hydration to vegetation value
 	/*	
 	float vegetation = 0.0;
