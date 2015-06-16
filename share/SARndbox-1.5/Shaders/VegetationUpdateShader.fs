@@ -27,17 +27,18 @@ void main()
 	{
 	float hydration=texture2DRect(hydrationSampler, gl_FragCoord.xy).r;
 	// Hydration to vegetation value
-	
+
+	// The vegetation follows two logistics functions, S-curves
 	float vegetation = 0.0;
-	float growth = 0.3;
-	float decay = 0.7;
-	float top = ((decay-growth)/2.0)+growth;
+	float growthMidpoint = 0.3;
+	float decayMidpoint = 0.7;
+	float top = ((decayMidpoint-growthMidpoint)/2.0)+growthMidpoint;
 	float k = 24.0; // Steepness
 	
-	if (hydration > growth && hydration <= top){
-			vegetation = 1.0/(1.0+exp(-1.0*k*(hydration-growth)));
-	} else if (hydration > top && hydration <= decay){
-			vegetation = 1.0/(1.0+exp(k*(hydration-decay)));
+	if (hydration > growthMidpoint && hydration <= top){
+			vegetation = 1.0/(1.0 + exp(-1.0 * k * (hydration - growthMidpoint)));
+	} else if (hydration > top && hydration <= decayMidpoint){
+			vegetation = 1.0/(1.0 + exp(k * (hydration - decayMidpoint)));
 	}
 	
 	/*	
