@@ -174,6 +174,7 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 	#BFD900, (191, 217, 0)
 	#FFFF00, (255, 255, 0)
 	*/
+	/*
 	vec4 color0 = vec4(255.0/255.0, 255.0/255.0, 0.0, 1.0);
 	vec4 color1 = vec4(191.0/255.0, 217/255.0, 0.0, 1.0);
 	vec4 color2 = vec4(128.0/255.0, 179/255.0, 0.0, 1.0);
@@ -195,6 +196,17 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 		} else {
 			vegColor = vec4(0.0, 0.0, 0.0, 0.0); 
 		}
+		baseColor=mix(baseColor, vegColor, 0.9);
+	}
+	*/
+	if(veg > 0.0) {
+		float r = 0.0;
+		float g = veg;
+		if (veg > 0.8) {
+			r = 0.5;
+		}
+		g = veg*0.8 + 0.2;
+		vec4 vegColor = vec4(r,g,0.0,1.0);
 		baseColor=mix(baseColor, vegColor, 0.9);
 	}
 
