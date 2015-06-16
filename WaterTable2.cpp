@@ -574,9 +574,19 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject,0);
 	//glDrawBuffer(GL_NONE); // TODO GL_NONE or GL_COLOR_ATTACHMENT0_EXT
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT); // TODO GL_NONE or GL_COLOR_ATTACHMENT0_EXT
-	glReadBuffer(GL_NONE);
+	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
 	}
 
+	{
+	/* Create the previous hydration frame buffer */
+	glGenFramebuffersEXT(1,&dataItem->prevHydrationFramebufferObject);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->prevHydrationFramebufferObject);
+
+	/* Attach the hydration texture to the hydration frame buffer */
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->prevHydrationTextureObject,0);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT); // TODO GL_NONE or GL_COLOR_ATTACHMENT0_EXT
+	glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
+	}
 	
 	/* Restore the previously bound frame buffer: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);
@@ -699,10 +709,10 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	{
 	GLhandleARB vertexShader=glCompileVertexShaderFromString(vertexShaderSource);
 	GLhandleARB fragmentShader=compileFragmentShader("PreviousHydrationUpdateShader");
-	dataItem->hydrationShader=glLinkShader(vertexShader,fragmentShader);
+	dataItem->prevHydrationShader=glLinkShader(vertexShader,fragmentShader);
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
-	dataItem->hydrationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->hydrationShader,"hydrationSampler");
+	dataItem->prevHydrationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->prevHydrationShader,"hydrationSampler");
 	}
 	
 	/*********************************************************************
@@ -1285,7 +1295,7 @@ void WaterTable2::updatePrevHydration(GLContextData& contextData) const {
 	glPushAttrib(GL_COLOR_BUFFER_BIT|GL_VIEWPORT_BIT);
 	GLint currentFrameBuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT,&currentFrameBuffer);
-
+		
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -1293,15 +1303,16 @@ void WaterTable2::updatePrevHydration(GLContextData& contextData) const {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
+	
 
-	/* Set up the vegetation framebuffer */
+	/* Set up the previous hydration framebuffer */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->prevHydrationFramebufferObject);
 	glViewport(0,0,size[0],size[1]);
 
 	glUseProgramObjectARB(dataItem->prevHydrationShader);
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject);
-	glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0);
+	glUniform1iARB(dataItem->prevHydrationShaderUniformLocations[0], 0);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
@@ -1322,10 +1333,12 @@ void WaterTable2::updatePrevHydration(GLContextData& contextData) const {
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
 	
 	/* Restore OpenGL matrices: */
+	
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+	
 	
 	/* Restore OpenGL state: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,currentFrameBuffer);

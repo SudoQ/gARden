@@ -952,6 +952,7 @@ void Sandbox::display(GLContextData& contextData) const
 		
 		//waterTable->runVegetationSimulation(contextData);
 		waterTable->updateHydration(contextData);
+		waterTable->updatePrevHydration(contextData);
 		waterTable->updateVegetation(contextData);
 		
 		}
