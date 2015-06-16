@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #extension GL_ARB_texture_rectangle : enable
 
 uniform sampler2DRect derivativeSampler;
+uniform sampler2DRect prevHydrationSampler;
 
 void main()
 	{
@@ -47,10 +48,10 @@ void main()
 		}
 	}
 	maxHydration = maxHydration/n; // The average water coverage
-	float currentHydration = gl_FragColor.r;
-	float velocity = 0.8;
-	float newHydration = currentHydration + (maxHydration - currentHydration)*velocity;
-	
+	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord).r;	
+	//float previousHydration = gl_FragColor.r;
+	float velocity = 0.01;
+	float newHydration = previousHydration + (maxHydration - previousHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
 	}

@@ -705,6 +705,7 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
 	dataItem->hydrationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->hydrationShader,"derivativeSampler");
+	dataItem->hydrationShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->hydrationShader,"prevHydrationSampler");
 	}
 	{
 	GLhandleARB vertexShader=glCompileVertexShaderFromString(vertexShaderSource);
@@ -1204,6 +1205,9 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->derivativeTextureObject);
 	glUniform1iARB(dataItem->hydrationShaderUniformLocations[0], 0);
+	glActiveTextureARB(GL_TEXTURE1_ARB);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->prevHydrationTextureObject);
+	glUniform1iARB(dataItem->hydrationShaderUniformLocations[1], 1);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
@@ -1220,6 +1224,8 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 
 	/* Unbind all shaders and textures: */
 	glUseProgramObjectARB(0);
+	glActiveTextureARB(GL_TEXTURE1_ARB);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
 	
