@@ -25,10 +25,10 @@ uniform sampler2DRect derivativeSampler;
 
 void main()
 	{
+	// Search the surronding pixels for water
 	float n = 0.0;
 	float maxHydration = 0.0;
-	// Search the surronding pixels for water
-	int range = 80;
+	int range = 80; // Range in pixels
 	int start = -1*(range/2);
 	int end = range/2;
 	int step = 1;
@@ -48,7 +48,7 @@ void main()
 	}
 	maxHydration = maxHydration/n; // The average water coverage
 	float currentHydration = gl_FragColor.r;
-	float k = 0.15;
+	float velocity = 0.15;
 	float newHydration = currentHydration + (maxHydration - currentHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
