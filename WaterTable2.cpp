@@ -101,9 +101,9 @@ Methods of class WaterTable2::DataItem:
 **************************************/
 
 WaterTable2::DataItem::DataItem(void)
-	:quantityTextureObject(0),derivativeTextureObject(0),quantityStarTextureObject(0),waterTextureObject(0),vegetationTextureObject(0),hydrationTextureObject(0),
-	 bathymetryFramebufferObject(0),derivativeFramebufferObject(0),maxStepSizeFramebufferObject(0),integrationFramebufferObject(0),waterFramebufferObject(0),vegetationFramebufferObject(0),hydrationFramebufferObject(0),
-	 bathymetryShader(0),derivativeShader(0),maxStepSizeShader(0),boundaryShader(0),eulerStepShader(0),rungeKuttaStepShader(0),waterAddShader(0),waterShader(0),vegetationShader(0),hydrationShader(0)
+	:quantityTextureObject(0),derivativeTextureObject(0),quantityStarTextureObject(0),waterTextureObject(0),vegetationTextureObject(0),maxHydrationTextureObject(0),
+	 bathymetryFramebufferObject(0),derivativeFramebufferObject(0),maxStepSizeFramebufferObject(0),integrationFramebufferObject(0),waterFramebufferObject(0),vegetationFramebufferObject(0),maxHydrationFramebufferObject(0),
+	 bathymetryShader(0),derivativeShader(0),maxStepSizeShader(0),boundaryShader(0),eulerStepShader(0),rungeKuttaStepShader(0),waterAddShader(0),waterShader(0),vegetationShader(0),maxHydrationShader(0)
 	{
 	for(int i=0;i<2;++i)
 		{
@@ -144,14 +144,14 @@ WaterTable2::DataItem::~DataItem(void)
 	glDeleteTextures(1,&quantityStarTextureObject);
 	glDeleteTextures(1,&waterTextureObject);
 	glDeleteTextures(1,&vegetationTextureObject);
-	glDeleteTextures(1,&hydrationTextureObject);
+	glDeleteTextures(1,&maxHydrationTextureObject);
 	glDeleteFramebuffersEXT(1,&bathymetryFramebufferObject);
 	glDeleteFramebuffersEXT(1,&derivativeFramebufferObject);
 	glDeleteFramebuffersEXT(1,&maxStepSizeFramebufferObject);
 	glDeleteFramebuffersEXT(1,&integrationFramebufferObject);
 	glDeleteFramebuffersEXT(1,&waterFramebufferObject);
 	glDeleteFramebuffersEXT(1,&vegetationFramebufferObject);
-	glDeleteFramebuffersEXT(1,&hydrationFramebufferObject);
+	glDeleteFramebuffersEXT(1,&maxHydrationFramebufferObject);
 	glDeleteObjectARB(bathymetryShader);
 	glDeleteObjectARB(derivativeShader);
 	glDeleteObjectARB(maxStepSizeShader);
@@ -161,7 +161,7 @@ WaterTable2::DataItem::~DataItem(void)
 	glDeleteObjectARB(waterAddShader);
 	glDeleteObjectARB(waterShader);
 	glDeleteObjectARB(vegetationShader);
-	glDeleteObjectARB(hydrationShader);
+	glDeleteObjectARB(maxHydrationShader);
 	}
 
 /************************************
@@ -448,9 +448,9 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	}
 	}
 	{
-	/* Create the hydration texture */
-	glGenTextures(1,&dataItem->hydrationTextureObject);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject);
+	/* Create the maxHydration texture */
+	glGenTextures(1,&dataItem->maxHydrationTextureObject);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->maxHydrationTextureObject);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_WRAP_S,GL_CLAMP);
@@ -545,12 +545,12 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	}
 
 	{
-	/* Create the hydration frame buffer */
-	glGenFramebuffersEXT(1,&dataItem->hydrationFramebufferObject);
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->hydrationFramebufferObject);
+	/* Create the maxHydration frame buffer */
+	glGenFramebuffersEXT(1,&dataItem->maxHydrationFramebufferObject);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->maxHydrationFramebufferObject);
 
-	/* Attach the hydration texture to the hydration frame buffer */
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject,0);
+	/* Attach the maxHydration texture to the maxHydration frame buffer */
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_RECTANGLE_ARB,dataItem->maxHydrationTextureObject,0);
 	//glDrawBuffer(GL_NONE); // TODO GL_NONE or GL_COLOR_ATTACHMENT0_EXT
 	glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT); // TODO GL_NONE or GL_COLOR_ATTACHMENT0_EXT
 	glReadBuffer(GL_NONE);
@@ -664,16 +664,16 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	dataItem->vegetationShader=glLinkShader(vertexShader,fragmentShader);
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
-	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"hydrationSampler");
+	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"maxHydrationSampler");
 	}
 
 	{
 	GLhandleARB vertexShader=glCompileVertexShaderFromString(vertexShaderSource);
 	GLhandleARB fragmentShader=compileFragmentShader("HydrationUpdateShader");
-	dataItem->hydrationShader=glLinkShader(vertexShader,fragmentShader);
+	dataItem->maxHydrationShader=glLinkShader(vertexShader,fragmentShader);
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
-	dataItem->hydrationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->hydrationShader,"derivativeSampler");
+	dataItem->maxHydrationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->maxHydrationShader,"derivativeSampler");
 	}
 	
 	/*********************************************************************
@@ -1157,14 +1157,14 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glPushMatrix();
 	glLoadIdentity();
 
-	/* Set up the hydration vegetation frame buffer: */
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->hydrationFramebufferObject);
+	/* Set up the maxHydration frame buffer: */
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->maxHydrationFramebufferObject);
 	glViewport(0,0,size[0],size[1]);
 	
-	glUseProgramObjectARB(dataItem->hydrationShader);
+	glUseProgramObjectARB(dataItem->maxHydrationShader);
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->derivativeTextureObject);
-	glUniform1iARB(dataItem->hydrationShaderUniformLocations[0], 0);
+	glUniform1iARB(dataItem->maxHydrationShaderUniformLocations[0], 0);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
@@ -1217,7 +1217,7 @@ void WaterTable2::updateVegetation(GLContextData& contextData) const {
 
 	glUseProgramObjectARB(dataItem->vegetationShader);
 	glActiveTextureARB(GL_TEXTURE0_ARB);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->maxHydrationTextureObject);
 	glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0);
 
 	/* Run the shader program */
@@ -1295,5 +1295,5 @@ void WaterTable2::bindDerivativeTexture(GLContextData& contextData) const {
 void WaterTable2::bindHydrationTexture(GLContextData& contextData) const {
 	DataItem* dataItem=contextData.retrieveDataItem<DataItem>(this);
 
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->maxHydrationTextureObject);
 }

@@ -85,16 +85,16 @@ class WaterTable2:public GLObject
 		GLint waterShaderUniformLocations[3];
 
 		GLuint vegetationTextureObject;
-		GLuint hydrationTextureObject;
+		GLuint maxHydrationTextureObject;
 
 		GLuint vegetationFramebufferObject;
-		GLuint hydrationFramebufferObject;
+		GLuint maxHydrationFramebufferObject;
 
 		GLhandleARB vegetationShader;
 		GLint vegetationShaderUniformLocations[1];
 
-		GLhandleARB hydrationShader;
-		GLint hydrationShaderUniformLocations[1];
+		GLhandleARB maxHydrationShader;
+		GLint maxHydrationShaderUniformLocations[1];
 		
 		/* Constructors and destructors: */
 		DataItem(void);
