@@ -1,6 +1,7 @@
 /***********************************************************************
-Water2EulerStepShader - Shader to perform an Euler integration step.
+VegetationUpdateShader - Shader to update the current vegetation level
 Copyright (c) 2012 Oliver Kreylos
+Modified by Simon Johansson 2015
 
 This file is part of the Augmented Reality Sandbox (SARndbox).
 

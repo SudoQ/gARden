@@ -1,6 +1,8 @@
 /***********************************************************************
-Water2EulerStepShader - Shader to perform an Euler integration step.
+PreviousHydrationUpdateShader - Shader to update the previous hydration
+level.
 Copyright (c) 2012 Oliver Kreylos
+Modified by Simon Johansson 2015
 
 This file is part of the Augmented Reality Sandbox (SARndbox).
 
