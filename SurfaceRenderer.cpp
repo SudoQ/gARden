@@ -2,6 +2,7 @@
 SurfaceRenderer - Class to render a surface defined by a regular grid in
 depth image space.
 Copyright (c) 2012-2013 Oliver Kreylos
+Modified by Simon Johansson 2015
 
 This file is part of the Augmented Reality Sandbox (SARndbox).
 
@@ -352,13 +353,16 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 		
 		if(waterTable!=0)
 			{
-			/* Declare the water handling functions: */
+			/* Declare the water and vegetation handling functions: */
 			fragmentDeclarations+="\
 				void addWaterColor(in vec2,inout vec4);\n\
-				void addWaterColorAdvected(inout vec4);\n";
+				void addWaterColorAdvected(inout vec4);\n\
+				void addVegetationColor(in vec2, inout vec4);\n";
 			
 			/* Compile the water handling shader: */
 			shaders.push_back(compileFragmentShader("SurfaceAddWaterColor"));
+			/* Compile the vegetation handling shader: */
+			shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
 			
 			/* Call water coloring function from fragment shader's main function: */
 			if(advectWaterTexture)
@@ -375,6 +379,10 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					addWaterColor(gl_FragCoord.xy,baseColor);\n\
 					\n";
 				}
+			/* Call the vegetation coloring function from the fragment shader's main function: */
+			fragmentMain+="\
+				addVegetationColor(gl_fragCoord.xy,baseColor);\n\
+				\n";
 			}
 		
 		/* Finish the fragment shader's main function: */
