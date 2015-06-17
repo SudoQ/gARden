@@ -29,6 +29,7 @@ void main()
 	// Hydration to vegetation value
 
 	// The vegetation follows two logistics functions, S-curves
+	/*	
 	float vegetation = 0.0;
 	float growthMidpoint = 0.3;
 	float decayMidpoint = 0.7;
@@ -40,11 +41,11 @@ void main()
 	} else if (hydration > top && hydration <= decayMidpoint){
 			vegetation = 1.0/(1.0 + exp(k * (hydration - decayMidpoint)));
 	}
-	
-	/*	
+	*/	
+	///*	
 	float vegetation = 0.0;
-	float growth = 0.0;
-	float decay = 1.0;
+	float growth = 0.1;
+	float decay = 0.9;
 	float top = ((decay-growth)/2.0)+growth;
 
 	float k1 = 1.0/(top-growth);
@@ -58,7 +59,7 @@ void main()
 	} else if (hydration > top && hydration < decay){
 		vegetation = k2 * hydration + m2;
 	}
-	*/
+	//*/	
 	
 	gl_FragColor=vec4(vegetation,0.0,0.0,0.0);
 	}
