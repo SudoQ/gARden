@@ -38,23 +38,6 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 	//vec4 color2 =		vec4(128.0/255.0,	179/255.0, 		0.0, 1.0);
 	//vec4 color3 =		vec4(191.0/255.0,	217/255.0, 		0.0, 1.0);
 	//vec4 color4 =		vec4(255.0/255.0,	255.0/255.0,	0.0, 1.0);
-	// TODO Move to seperate color map
-	vec4 vegColor;
-	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0, 1.0);
-	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0, 1.0); 
-	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0, 1.0);
-	vec4 color3 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
-	vec4 color4 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
-	vec4 color5 =		vec4(208.0/255.0,	233.0/255.0,	0.0, 1.0);
-	vec4 color6 =		vec4(185.0/255.0,	207.0/255.0,	0.0, 1.0);
-	vec4 color7 =		vec4(162.0/255.0,	192.0/255.0,	0.0, 1.0);
-	vec4 color8 =		vec4(139.0/255.0,	176.0/255.0,	0.0, 1.0);
-	vec4 color9 =		vec4(118.0/255.0,	158.0/255.0,	0.0, 1.0);
-	vec4 color10 =	vec4(90.0/255.0,	142.0/255.0,	0.0, 1.0);
-	vec4 color11 =	vec4(69.0/255.0,	128.0/255.0,	0.0, 1.0);
-	vec4 color12 =	vec4(45.0/255.0,	112.0/255.0,	0.0, 1.0);
-	vec4 color13 =	vec4(23.0/255.0,	97.0/255.0,	0.0, 1.0);
-	vec4 color14 =	vec4(0.0/255.0,		82.0/255.0,	0.0, 1.0);
 	/*
 	if(veg > 0.0){
 		vec4 vegColor;
@@ -86,6 +69,23 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 		baseColor=mix(baseColor, vegColor, 0.9);
 	}
 	*/
+	// TODO Move to seperate color map
+	vec4 vegColor;
+	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0, 1.0);
+	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0, 1.0); 
+	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0, 1.0);
+	vec4 color3 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
+	vec4 color4 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
+	vec4 color5 =		vec4(208.0/255.0,	233.0/255.0,	0.0, 1.0);
+	vec4 color6 =		vec4(185.0/255.0,	207.0/255.0,	0.0, 1.0);
+	vec4 color7 =		vec4(162.0/255.0,	192.0/255.0,	0.0, 1.0);
+	vec4 color8 =		vec4(139.0/255.0,	176.0/255.0,	0.0, 1.0);
+	vec4 color9 =		vec4(118.0/255.0,	158.0/255.0,	0.0, 1.0);
+	vec4 color10 =	vec4(90.0/255.0,	142.0/255.0,	0.0, 1.0);
+	vec4 color11 =	vec4(69.0/255.0,	128.0/255.0,	0.0, 1.0);
+	vec4 color12 =	vec4(45.0/255.0,	112.0/255.0,	0.0, 1.0);
+	vec4 color13 =	vec4(23.0/255.0,	97.0/255.0,	0.0, 1.0);
+	vec4 color14 =	vec4(0.0/255.0,		82.0/255.0,	0.0, 1.0);
 	if(veg > 0.0){
 		if(veg <= 1.0/15.0){
 				vegColor = color0;
