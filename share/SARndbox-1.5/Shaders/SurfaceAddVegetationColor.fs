@@ -39,6 +39,7 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 	//vec4 color3 =		vec4(191.0/255.0,	217/255.0, 		0.0, 1.0);
 	//vec4 color4 =		vec4(255.0/255.0,	255.0/255.0,	0.0, 1.0);
 	// TODO Move to seperate color map
+	vec4 vegColor;
 	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0, 1.0);
 	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0, 1.0); 
 	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0, 1.0);
@@ -86,33 +87,33 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 	}
 	*/
 	if(veg > 0.0){
-		if(x <= 1.0/15.0){
+		if(veg <= 1.0/15.0){
 				vegColor = color0;
-		} else if(x <= 2.0/15.0) {
+		} else if(veg <= 2.0/15.0) {
 				vegColor = color1;
-		} else if(x <= 3.0/15.0) {
+		} else if(veg <= 3.0/15.0) {
 				vegColor = color2;
-		} else if(x <= 4.0/15.0) {
+		} else if(veg <= 4.0/15.0) {
 				vegColor = color3;
-		} else if(x <= 5.0/15.0) {
+		} else if(veg <= 5.0/15.0) {
 				vegColor = color4;
-		} else if(x <= 6.0/15.0) {
+		} else if(veg <= 6.0/15.0) {
 				vegColor = color5;
-		} else if(x <= 7.0/15.0) {
+		} else if(veg <= 7.0/15.0) {
 				vegColor = color6;
-		} else if(x <= 8.0/15.0) {
+		} else if(veg <= 8.0/15.0) {
 				vegColor = color7;
-		} else if(x <= 9.0/15.0) {
+		} else if(veg <= 9.0/15.0) {
 				vegColor = color8;
-		} else if(x <= 10.0/15.0) {
+		} else if(veg <= 10.0/15.0) {
 				vegColor = color9;
-		} else if(x <= 11.0/15.0) {
+		} else if(veg <= 11.0/15.0) {
 				vegColor = color10;
-		} else if(x <= 12.0/15.0) {
+		} else if(veg <= 12.0/15.0) {
 				vegColor = color11;
-		} else if(x <= 13.0/16.0) {
+		} else if(veg <= 13.0/16.0) {
 				vegColor = color12;
-		} else if(x <= 14.0/15.0) {
+		} else if(veg <= 14.0/15.0) {
 				vegColor = color13;
 		} else {
 				vegColor = color14;
