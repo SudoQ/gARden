@@ -30,12 +30,12 @@ void main()
 	// Search the surronding pixels for water
 	float n = 0.0;
 	float maxHydration = 0.0;
-	int range = 80; // Range in pixels
-	int start = -1*(range/2);
-	int end = range/2;
-	int step = 1;
-	for(int i=start; i<end; i+=step){
-		for(int j=start; j<end; j+=step){
+	float range = 80.0; // Range in pixels
+	float start = -1.0*(range/2.0);
+	float end = range/2.0;
+	float step = 1.0;
+	for(float i=start; i<end; i+=step){
+		for(float j=start; j<end; j+=step){
 			n++;
 			float deriv0 = texture2DRect(derivativeSampler, vec2(gl_FragCoord.x+i, gl_FragCoord.y+j)).r;
 			float water = 0.0;
@@ -49,7 +49,7 @@ void main()
 		}
 	}
 	maxHydration = maxHydration/n; // The average water coverage
-	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord).r;	
+	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord.xy).r;	
 	//float previousHydration = gl_FragColor.r;
 	float velocity = 0.001;
 	float newHydration = previousHydration + (maxHydration - previousHydration)*velocity;
