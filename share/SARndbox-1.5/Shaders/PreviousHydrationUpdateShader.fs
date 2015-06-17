@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #extension GL_ARB_texture_rectangle : enable
 
-uniform sampler2DRect hydrationSampler;;
+uniform sampler2DRect hydrationSampler;
 
 void main()
 	{
