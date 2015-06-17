@@ -27,5 +27,5 @@ uniform sampler2DRect hydrationSampler;
 
 void main()
 	{
-	gl_FragColor = vec4(texture2DRect(hydrationSampler, gl_FragCoord).r,0.0,0.0,0.0);
+	gl_FragColor = vec4(texture2DRect(hydrationSampler, gl_FragCoord.xy).r,0.0,0.0,0.0);
 	}
