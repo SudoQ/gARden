@@ -174,12 +174,28 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 	#BFD900, (191, 217, 0)
 	#FFFF00, (255, 255, 0)
 	*/
-	vec4 color0 = vec4(0.0/255.0, 102/255.0, 0.0, 1.0);
-	vec4 color1 = vec4(64.0/255.0, 140/255.0, 0.0, 1.0); 
-	vec4 color2 = vec4(128.0/255.0, 179/255.0, 0.0, 1.0);
-	vec4 color3 = vec4(191.0/255.0, 217/255.0, 0.0, 1.0);
-	vec4 color4 = vec4(255.0/255.0, 255.0/255.0, 0.0, 1.0);
-
+	//vec4 color0 =		vec4(0.0/255.0, 	102/255.0, 		0.0, 1.0);
+	//vec4 color1 =		vec4(64.0/255.0, 	140/255.0, 		0.0, 1.0); 
+	//vec4 color2 =		vec4(128.0/255.0,	179/255.0, 		0.0, 1.0);
+	//vec4 color3 =		vec4(191.0/255.0,	217/255.0, 		0.0, 1.0);
+	//vec4 color4 =		vec4(255.0/255.0,	255.0/255.0,	0.0, 1.0);
+	// TODO Move to seperate color map
+	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0, 1.0);
+	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0, 1.0); 
+	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0, 1.0);
+	vec4 color3 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
+	vec4 color4 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
+	vec4 color5 =		vec4(208.0/255.0,	233.0/255.0,	0.0, 1.0);
+	vec4 color6 =		vec4(185.0/255.0,	207.0/255.0,	0.0, 1.0);
+	vec4 color7 =		vec4(162.0/255.0,	192.0/255.0,	0.0, 1.0);
+	vec4 color8 =		vec4(139.0/255.0,	176.0/255.0,	0.0, 1.0);
+	vec4 color9 =		vec4(118.0/255.0,	158.0/255.0,	0.0, 1.0);
+	vec4 color10 =	vec4(90.0/255.0,	142.0/255.0,	0.0, 1.0);
+	vec4 color11 =	vec4(69.0/255.0,	128.0/255.0,	0.0, 1.0);
+	vec4 color12 =	vec4(45.0/255.0,	112.0/255.0,	0.0, 1.0);
+	vec4 color13 =	vec4(23.0/255.0,	97.0/255.0,	0.0, 1.0);
+	vec4 color14 =	vec4(0.0/255.0,		82.0/255.0,	0.0, 1.0);
+	/*
 	if(veg > 0.0){
 		vec4 vegColor;
 		if(veg < 0.2) {
@@ -194,6 +210,41 @@ void addWaterColor(in vec2 fragCoord,inout vec4 baseColor)
 			vegColor = color4;
 		} else {
 			vegColor = vec4(0.0, 0.0, 0.0, 0.0); 
+		}
+		baseColor=mix(baseColor, vegColor, 1.0);
+	}
+	*/
+	if(veg > 0.0){
+		if(x <= 1.0/15.0){
+				vegColor = color0;
+		} else if(x <= 2.0/15.0) {
+				vegColor = color1;
+		} else if(x <= 3.0/15.0) {
+				vegColor = color2;
+		} else if(x <= 4.0/15.0) {
+				vegColor = color3;
+		} else if(x <= 5.0/15.0) {
+				vegColor = color4;
+		} else if(x <= 6.0/15.0) {
+				vegColor = color5;
+		} else if(x <= 7.0/15.0) {
+				vegColor = color6;
+		} else if(x <= 8.0/15.0) {
+				vegColor = color7;
+		} else if(x <= 9.0/15.0) {
+				vegColor = color8;
+		} else if(x <= 10.0/15.0) {
+				vegColor = color9;
+		} else if(x <= 11.0/15.0) {
+				vegColor = color10;
+		} else if(x <= 12.0/15.0) {
+				vegColor = color11;
+		} else if(x <= 13.0/16.0) {
+				vegColor = color12;
+		} else if(x <= 14.0/15.0) {
+				vegColor = color13;
+		} else {
+				vegColor = color14;
 		}
 		baseColor=mix(baseColor, vegColor, 1.0);
 	}
