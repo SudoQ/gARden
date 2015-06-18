@@ -364,6 +364,10 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			/* Compile the vegetation handling shader: */
 			shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
 			
+			/* Call the vegetation coloring function from the fragment shader's main function: */
+			fragmentMain+="\
+				addVegetationColor(gl_FragCoord.xy,baseColor);\n\
+				\n";
 			/* Call water coloring function from fragment shader's main function: */
 			if(advectWaterTexture)
 				{
@@ -379,10 +383,6 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					addWaterColor(gl_FragCoord.xy,baseColor);\n\
 					\n";
 				}
-			/* Call the vegetation coloring function from the fragment shader's main function: */
-			fragmentMain+="\
-				addVegetationColor(gl_fragCoord.xy,baseColor);\n\
-				\n";
 			}
 		
 		/* Finish the fragment shader's main function: */

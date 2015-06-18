@@ -71,9 +71,9 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 	*/
 	// TODO Move to seperate color map
 	vec4 vegColor;
-	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0, 1.0);
-	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0, 1.0); 
-	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0, 1.0);
+	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0/255.0, 1.0);
+	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0/255.0, 1.0); 
+	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0/255.0, 1.0);
 	vec4 color3 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
 	vec4 color4 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
 	vec4 color5 =		vec4(208.0/255.0,	233.0/255.0,	0.0, 1.0);
