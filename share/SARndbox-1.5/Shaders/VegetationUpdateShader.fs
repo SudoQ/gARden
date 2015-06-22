@@ -45,15 +45,14 @@ void main()
 	//*/	
 	/*	
 	float vegetation = 0.0;
-	float growth = 0.1;
-	float decay = 0.9;
+	float growth = 0.2;
+	float decay = 0.8;
 	float top = ((decay-growth)/2.0)+growth;
 
 	float k1 = 1.0/(top-growth);
 	float k2 = 1.0/(top-decay);
 	float m1 = 1.0 - top*k1;
 	float m2 = 1.0 - top*k2;
-	//vegetation = hydration;
 	
 	if (hydration > growth && hydration < top){
 		vegetation = k1 * hydration + m1;
