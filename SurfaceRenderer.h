@@ -95,7 +95,6 @@ class SurfaceRenderer:public GLObject
 	Kinect::FrameBuffer depthImage; // The most recent float-pixel depth image
 	unsigned int depthImageVersion; // Version number of the depth image
 	double animationTime; // Time value for water animation
-	bool useVegetation; // Flag whether to add vegetation surface rendering
 	
 	/* Private methods: */
 	void shaderSourceFileChanged(const IO::FileMonitor::Event& event); // Callback called when one of the external shader source files is changed
@@ -120,7 +119,6 @@ class SurfaceRenderer:public GLObject
 	void setWaterOpacity(GLfloat newWaterOpacity); // Sets the water opacity factor
 	void setDepthImage(const Kinect::FrameBuffer& newDepthImage); // Sets a new depth image for subsequent surface rendering
 	void setAnimationTime(double newAnimationTime); // Sets the time for water animation in seconds
-	void setUseVegetation(bool newUseVegetation); // Enables or disables vegetation rendering
 	void glRenderDepthOnly(const PTransform& modelviewProjection,GLContextData& contextData) const; // Renders the surface into a pure depth buffer, for early z culling or shadow passes etc.
 	void glRenderElevation(GLContextData& contextData) const; // Renders the surface's elevation relative to the base plane into the current frame buffer
 	void glPrepareContourLines(GLContextData& contextData) const; // Prepares to render topographic contour lines by rendering the base plane-relative elevations of pixel corners into a frame buffer
