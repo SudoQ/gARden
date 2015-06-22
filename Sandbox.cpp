@@ -454,6 +454,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	 waterTable(0),waterSpeed(1.0),waterMaxSteps(30),rainStrength(0.25f),
 	 rmFrameFilter(0),rainMaker(0),addWaterFunction(0),addWaterFunctionRegistered(false),
 	 fixProjectorView(false),hillshade(false),useShadows(false),useHeightMap(false),
+	 useVegetation(true),
 	 waterRenderer(0),
 	 sun(0),
 	 mainMenu(0)
@@ -489,6 +490,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	double rainElevationMin=-1000.0;
 	double rainElevationMax=1000.0;
 	double evaporationRate=0.0;
+	//bool useVegetation=true; 
 	for(int i=1;i<argc;++i)
 		{
 		if(argv[i][0]=='-')
@@ -589,6 +591,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 				useHeightMap=true;
 			else if(strcasecmp(argv[i]+1,"rws")==0)
 				renderWaterSurface=true;
+			else if(strcasecmp(argv[i]+1,"nv")==0)
+				useVegetation=false;
 			}
 		}
 	
@@ -659,6 +663,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"     Enables elevation color mapping"<<std::endl;
 		std::cout<<"  -rws"<<std::endl;
 		std::cout<<"     Renders water surface as geometric surface"<<std::endl;
+		std::cout<<"  -nv"<<std::endl;
+		std::cout<<"     Enables vegetation surface rendering"<<std::endl;
 		}
 	
 	/* Enable background USB event handling: */
@@ -823,6 +829,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	surfaceRenderer->setHeightMapRange(heightMap.getNumEntries(),heightMap.getScalarRangeMin(),heightMap.getScalarRangeMax());
 	surfaceRenderer->setDrawContourLines(useContourLines);
 	surfaceRenderer->setContourLineDistance(contourLineSpacing);
+	surfaceRenderer->setUseVegetation(useVegetation);
 	if(hillshade)
 		surfaceRenderer->setIlluminate(true);
 	if(waterTable!=0&&waterSpeed>0.0)
@@ -951,10 +958,12 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
-		//waterTable->runVegetationSimulation(contextData);
-		waterTable->updateHydration(contextData);
-		waterTable->updatePrevHydration(contextData);
-		waterTable->updateVegetation(contextData);
+		if(useVegetation){
+			waterTable->runVegetationSimulation(contextData);
+			//waterTable->updateHydration(contextData);
+			//waterTable->updatePrevHydration(contextData);
+			//waterTable->updateVegetation(contextData);
+		}
 		
 		}
 	if(fixProjectorView)
