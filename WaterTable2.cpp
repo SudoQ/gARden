@@ -1354,6 +1354,7 @@ void WaterTable2::updatePrevHydration(GLContextData& contextData) const {
 
 void WaterTable2::runVegetationSimulation(GLContextData& contextData) const {
 	updateHydration(contextData);
+	updatePrevHydration(contextData);
 	updateVegetation(contextData);
 }
 
