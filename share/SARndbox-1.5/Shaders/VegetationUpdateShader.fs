@@ -31,7 +31,7 @@ void main()
 
 	// The vegetation follows two logistics functions, S-curves
 	///*	
-	#if 1
+	#if 0
 	float vegetation = 0.0;
 	float growthMidpoint = 0.3;
 	float decayMidpoint = 0.7;
