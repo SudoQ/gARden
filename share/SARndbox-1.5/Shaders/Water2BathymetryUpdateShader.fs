@@ -40,7 +40,18 @@ void main()
 	
 	/* Get the old quantity at the cell center: */
 	vec3 q=texture2DRect(quantitySampler,gl_FragCoord.xy).rgb;
-	
+
 	/* Update the water surface height: */
 	gl_FragColor=vec4(max(q.x-bOld,0.0)+bNew,q.yz,0.0);
+
+	/*
+	float minimum = -1.0;
+	float height = max(q.x-bOld,0.0)+bNew;
+	float xValue = height;
+	if (height < minimum) {
+		xValue = minimum;
+	}
+	
+	gl_FragColor=vec4(xValue,q.yz,0.0);
+	*/
 	}
