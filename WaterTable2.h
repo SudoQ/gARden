@@ -69,7 +69,7 @@ class WaterTable2:public GLObject
 		GLuint integrationFramebufferObject; // Frame buffer used for the Euler and Runge-Kutta integration steps
 		GLuint waterFramebufferObject; // Frame buffer used for the water rendering step
 		GLhandleARB bathymetryShader; // Shader to update cell-centered conserved quantities after a change to the bathymetry grid
-		GLint bathymetryShaderUniformLocations[3];
+		GLint bathymetryShaderUniformLocations[5];
 		GLhandleARB derivativeShader; // Shader to compute face-centered partial fluxes and cell-centered temporal derivatives
 		GLint derivativeShaderUniformLocations[6];
 		GLhandleARB maxStepSizeShader; // Shader to compute a maximum step size for a subsequent Runge-Kutta integration step
