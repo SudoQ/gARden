@@ -602,6 +602,8 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	dataItem->bathymetryShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->bathymetryShader,"oldBathymetrySampler");
 	dataItem->bathymetryShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->bathymetryShader,"newBathymetrySampler");
 	dataItem->bathymetryShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->bathymetryShader,"quantitySampler");
+	dataItem->bathymetryShaderUniformLocations[3]=glGetUniformLocationARB(dataItem->bathymetryShader,"texWidth");
+	dataItem->bathymetryShaderUniformLocations[4]=glGetUniformLocationARB(dataItem->bathymetryShader,"texHeight");
 	}
 	
 	/* Create the temporal derivative computation shader: */
@@ -923,7 +925,10 @@ void WaterTable2::updateBathymetry(const SurfaceRenderer& bathymetryRenderer,GLC
 	glActiveTextureARB(GL_TEXTURE2_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->quantityTextureObject);
 	glUniform1iARB(dataItem->bathymetryShaderUniformLocations[2],2);
-	
+
+	glUniformARB(dataItem->bathymetryShaderUniformLocations[3], static_cast<GLfloat>(size[0]));
+	glUniformARB(dataItem->bathymetryShaderUniformLocations[4], static_cast<GLfloat>(size[1]));
+
 	/* Run the bathymetry update: */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
