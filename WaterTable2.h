@@ -69,7 +69,7 @@ class WaterTable2:public GLObject
 		GLuint integrationFramebufferObject; // Frame buffer used for the Euler and Runge-Kutta integration steps
 		GLuint waterFramebufferObject; // Frame buffer used for the water rendering step
 		GLhandleARB bathymetryShader; // Shader to update cell-centered conserved quantities after a change to the bathymetry grid
-		GLint bathymetryShaderUniformLocations[5];
+		GLint bathymetryShaderUniformLocations[6];
 		GLhandleARB derivativeShader; // Shader to compute face-centered partial fluxes and cell-centered temporal derivatives
 		GLint derivativeShaderUniformLocations[6];
 		GLhandleARB maxStepSizeShader; // Shader to compute a maximum step size for a subsequent Runge-Kutta integration step
@@ -121,6 +121,7 @@ class WaterTable2:public GLObject
 	GLfloat waterTextureMatrix[16]; // An OpenGL-conforming matrix expressing the transformation from camera space to water level texture space
 	std::vector<const AddWaterFunction*> renderFunctions; // A list of functions that are called after each water flow simulation step to locally add or remove water from the water table
 	GLfloat waterDeposit; // A fixed amount of water added at every iteration of the flow simulation, for evaporation etc.
+	GLfloat baseWaterLevel; // Base water level relative to the base plane
 
 	// Vegetation simulation parameters
 	GLfloat hydrationRange;
@@ -159,6 +160,7 @@ class WaterTable2:public GLObject
 		return waterDeposit;
 		}
 	void setWaterDeposit(GLfloat newWaterDeposit); // Sets the amount of deposited water
+	void setBaseWaterLevel(GLfloat newBaseWaterLevel); // Set the base water level
 	void setHydrationRange(GLfloat newHydrationRangeRatio); // Sets the hydration range
 	void setDetectionThreshold(GLfloat newDetectionThreshold); // Sets the hydration water detection threshold
 	void setHydrationVelocity(GLfloat newHydrationVelocity); // Sets the hydration velocity

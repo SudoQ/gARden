@@ -337,13 +337,16 @@ WaterTable2::WaterTable2(GLsizei width,GLsizei height,const Plane& basePlane,con
 	/* Initialize the water deposit amount: */
 	waterDeposit=0.0f;
 
-	/* Initialize the vegetation simulation parameters */
-	hydrationRange = static_cast<GLfloat>(height) * 0.1625;
-	detectionThreshold = 0.001;
-	hydrationVelocity = 0.01;
-	hydrationStepSize = 2.0;
-	vegStart = 0.2;
-	vegEnd = 0.8;
+	/* Initialize the base water level: */
+	baseWaterLevel=-3.0f;
+
+	/* Initialize the vegetation simulation parameters: */
+	hydrationRange = static_cast<GLfloat>(height) * 0.1625f;
+	detectionThreshold = 0.001f;
+	hydrationVelocity = 0.01f;
+	hydrationStepSize = 2.0f;
+	vegStart = 0.2f;
+	vegEnd = 0.8f;
 	}
 
 WaterTable2::~WaterTable2(void)
@@ -612,6 +615,7 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	dataItem->bathymetryShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->bathymetryShader,"quantitySampler");
 	dataItem->bathymetryShaderUniformLocations[3]=glGetUniformLocationARB(dataItem->bathymetryShader,"texWidth");
 	dataItem->bathymetryShaderUniformLocations[4]=glGetUniformLocationARB(dataItem->bathymetryShader,"texHeight");
+	dataItem->bathymetryShaderUniformLocations[5]=glGetUniformLocationARB(dataItem->bathymetryShader,"baseWaterLevel");
 	}
 	
 	/* Create the temporal derivative computation shader: */
@@ -869,6 +873,11 @@ void WaterTable2::setMaxStepSize(GLfloat newMaxStepSize)
 	maxStepSize=newMaxStepSize;
 	}
 
+void WaterTable2::setBaseWaterLevel(GLfloat newBaseWaterLevel)
+	{
+		baseWaterLevel=newBaseWaterLevel;
+	}
+
 void WaterTable2::setHydrationRange(GLfloat newHydrationRangeRatio)
 	{
 	if(newHydrationRangeRatio >= 0.0 && newHydrationRangeRatio <= 1.0)
@@ -982,6 +991,7 @@ void WaterTable2::updateBathymetry(const SurfaceRenderer& bathymetryRenderer,GLC
 
 	glUniformARB(dataItem->bathymetryShaderUniformLocations[3], static_cast<GLfloat>(size[0]));
 	glUniformARB(dataItem->bathymetryShaderUniformLocations[4], static_cast<GLfloat>(size[1]));
+	glUniformARB(dataItem->bathymetryShaderUniformLocations[5], baseWaterLevel);
 
 	/* Run the bathymetry update: */
 	glMatrixMode(GL_PROJECTION);

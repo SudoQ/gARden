@@ -27,6 +27,7 @@ uniform sampler2DRect newBathymetrySampler;
 uniform sampler2DRect quantitySampler;
 uniform float texWidth;
 uniform float texHeight;
+uniform float baseWaterLevel;
 
 void main()
 	{
@@ -52,7 +53,7 @@ void main()
 	if (gl_FragCoord.x < (0.05 * texWidth) || gl_FragCoord.x > (0.95 * texWidth)){}
 	else if (gl_FragCoord.y < (0.05 * texHeight) || gl_FragCoord.y > (0.95 * texHeight)){}
 	else {
-		float minimum = -3.0;
+		float minimum = baseWaterLevel;
 		if (height < minimum) {
 			xValue = minimum;
 		}

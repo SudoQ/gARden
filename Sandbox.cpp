@@ -490,6 +490,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	double rainElevationMin=-1000.0;
 	double rainElevationMax=1000.0;
 	double evaporationRate=0.0;
+	double baseWaterLevel=-3.0f;
 	//bool useVegetation=true; 
 	double hydrationRange=0.1625;
 	double detectionThreshold=0.001;
@@ -597,6 +598,11 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 				useHeightMap=true;
 			else if(strcasecmp(argv[i]+1,"rws")==0)
 				renderWaterSurface=true;
+			else if(strcasecmp(argv[i]+1,"bwl")==0)
+				{
+				++i;
+				baseWaterLevel=atof(argv[i]);
+				}
 			else if(strcasecmp(argv[i]+1,"nv")==0)
 				useVegetation=false;
 			else if(strcasecmp(argv[i]+1,"hr")==0)
@@ -696,6 +702,9 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"     Enables elevation color mapping"<<std::endl;
 		std::cout<<"  -rws"<<std::endl;
 		std::cout<<"     Renders water surface as geometric surface"<<std::endl;
+		std::cout<<"  -bwl <base water level>"<<std::endl;
+		std::cout<<"     Base water level relative to the base plane"<<std::endl;
+		std::cout<<"     Default: -3.0"<<std::endl;
 		std::cout<<"  -nv"<<std::endl;
 		std::cout<<"     Disables vegetation surface rendering"<<std::endl;
 		std::cout<<"  -hr <hydration range>"<<std::endl;
@@ -864,6 +873,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	/* Initialize the water flow simulator: */
 	waterTable=new WaterTable2(wtSize[0],wtSize[1],basePlane,basePlaneCorners);
 	waterTable->setElevationRange(elevationMin,rainElevationMax);
+	waterTable->setBaseWaterLevel(baseWaterLevel);
 	waterTable->setWaterDeposit(evaporationRate);
 	waterTable->setHydrationRange(hydrationRange);
 	waterTable->setDetectionThreshold(detectionThreshold);
