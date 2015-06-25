@@ -24,16 +24,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 uniform sampler2DRect derivativeSampler;
 uniform sampler2DRect prevHydrationSampler;
+uniform float hydrationRange;
+uniform float detectionThreshold;
+uniform float hydrationVelocity;
+uniform float hydrationStepSize;
 
 void main()
 	{
 	// Search the surronding pixels for water
 	float n = 0.0;
 	float maxHydration = 0.0;
+	#if 0
 	float range = 80.0; // Range in pixels
+	#else
+	float range = hydrationRange;
+	#endif
 	float start = -1.0*(range/2.0);
 	float end = range/2.0;
-	float step = 1.0;
+	float step = hydrationStepSize;
 	for(float i=start; i<end; i+=step){
 		for(float j=start; j<end; j+=step){
 			n++;
@@ -41,17 +49,21 @@ void main()
 			float water = 0.0;
 				
 			// Water detection
+			#if 0
 			if (abs(deriv0) > 0.001){
+			#else
+			if (abs(deriv0) > detectionThreshold){
+			#endif
 				water = 1.0;
 			}
+
 			
 			maxHydration += water;
 		}
 	}
 	maxHydration = maxHydration/n; // The average water coverage
 	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord.xy).r;	
-	//float previousHydration = gl_FragColor.r;
-	float velocity = 0.01;
+	float velocity = hydrationVelocity;
 	float newHydration = previousHydration + (maxHydration - previousHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);

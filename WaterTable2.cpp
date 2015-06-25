@@ -336,6 +336,17 @@ WaterTable2::WaterTable2(GLsizei width,GLsizei height,const Plane& basePlane,con
 	
 	/* Initialize the water deposit amount: */
 	waterDeposit=0.0f;
+
+	/* Initialize the base water level: */
+	baseWaterLevel=-3.0f;
+
+	/* Initialize the vegetation simulation parameters: */
+	hydrationRange = static_cast<GLfloat>(height) * 0.1625f;
+	detectionThreshold = 0.001f;
+	hydrationVelocity = 0.01f;
+	hydrationStepSize = 2.0f;
+	vegStart = 0.2f;
+	vegEnd = 0.8f;
 	}
 
 WaterTable2::~WaterTable2(void)
@@ -602,6 +613,9 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	dataItem->bathymetryShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->bathymetryShader,"oldBathymetrySampler");
 	dataItem->bathymetryShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->bathymetryShader,"newBathymetrySampler");
 	dataItem->bathymetryShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->bathymetryShader,"quantitySampler");
+	dataItem->bathymetryShaderUniformLocations[3]=glGetUniformLocationARB(dataItem->bathymetryShader,"texWidth");
+	dataItem->bathymetryShaderUniformLocations[4]=glGetUniformLocationARB(dataItem->bathymetryShader,"texHeight");
+	dataItem->bathymetryShaderUniformLocations[5]=glGetUniformLocationARB(dataItem->bathymetryShader,"baseWaterLevel");
 	}
 	
 	/* Create the temporal derivative computation shader: */
@@ -697,6 +711,9 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
 	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"hydrationSampler");
+	dataItem->vegetationShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->vegetationShader,"vegStart");
+	dataItem->vegetationShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->vegetationShader,"vegEnd");
+
 	}
 
 	{
@@ -707,6 +724,11 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glDeleteObjectARB(fragmentShader);
 	dataItem->hydrationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->hydrationShader,"derivativeSampler");
 	dataItem->hydrationShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->hydrationShader,"prevHydrationSampler");
+	dataItem->hydrationShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->hydrationShader,"hydrationRange");
+	dataItem->hydrationShaderUniformLocations[3]=glGetUniformLocationARB(dataItem->hydrationShader,"detectionThreshold");
+	dataItem->hydrationShaderUniformLocations[4]=glGetUniformLocationARB(dataItem->hydrationShader,"hydrationVelocity");
+	dataItem->hydrationShaderUniformLocations[5]=glGetUniformLocationARB(dataItem->hydrationShader,"hydrationStepSize");
+
 	}
 	{
 	GLhandleARB vertexShader=glCompileVertexShaderFromString(vertexShaderSource);
@@ -851,6 +873,49 @@ void WaterTable2::setMaxStepSize(GLfloat newMaxStepSize)
 	maxStepSize=newMaxStepSize;
 	}
 
+void WaterTable2::setBaseWaterLevel(GLfloat newBaseWaterLevel)
+	{
+		baseWaterLevel=newBaseWaterLevel;
+	}
+
+void WaterTable2::setHydrationRange(GLfloat newHydrationRangeRatio)
+	{
+	if(newHydrationRangeRatio >= 0.0 && newHydrationRangeRatio <= 1.0)
+		{
+		hydrationRange = static_cast<GLfloat>(size[1]) * newHydrationRangeRatio;
+		}
+	}
+
+void WaterTable2::setDetectionThreshold(GLfloat newDetectionThreshold)
+	{
+	detectionThreshold = newDetectionThreshold;	
+	}
+
+void WaterTable2::setHydrationVelocity(GLfloat newHydrationVelocity)
+	{
+	if(newHydrationVelocity > 0.0 && newHydrationVelocity <= 1.0)
+		{
+		hydrationVelocity = newHydrationVelocity;
+		}
+	}
+
+void WaterTable2::setHydrationStepSize(GLfloat newHydrationStepSize)
+	{
+	if(newHydrationStepSize >= 1.0)
+		{
+			hydrationStepSize = newHydrationStepSize;
+		}
+	}
+
+void WaterTable2::setVegetationRange(GLfloat newVegStart, GLfloat newVegEnd)
+	{
+	if(newVegStart <= newVegEnd && newVegStart >= 0.0 && newVegEnd <= 1.0)
+		{
+			vegStart = newVegStart;
+			vegEnd = newVegEnd;
+		}
+	}
+
 void WaterTable2::addRenderFunction(const AddWaterFunction* newRenderFunction)
 	{
 	/* Store the new render function: */
@@ -923,7 +988,11 @@ void WaterTable2::updateBathymetry(const SurfaceRenderer& bathymetryRenderer,GLC
 	glActiveTextureARB(GL_TEXTURE2_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->quantityTextureObject);
 	glUniform1iARB(dataItem->bathymetryShaderUniformLocations[2],2);
-	
+
+	glUniformARB(dataItem->bathymetryShaderUniformLocations[3], static_cast<GLfloat>(size[0]));
+	glUniformARB(dataItem->bathymetryShaderUniformLocations[4], static_cast<GLfloat>(size[1]));
+	glUniformARB(dataItem->bathymetryShaderUniformLocations[5], baseWaterLevel);
+
 	/* Run the bathymetry update: */
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1198,7 +1267,7 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glPushMatrix();
 	glLoadIdentity();
 
-	/* Set up the hydration vegetation frame buffer: */
+	/* Set up the hydration frame buffer: */
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,dataItem->hydrationFramebufferObject);
 	glViewport(0,0,size[0],size[1]);
 	
@@ -1209,6 +1278,10 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glActiveTextureARB(GL_TEXTURE1_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->prevHydrationTextureObject);
 	glUniform1iARB(dataItem->hydrationShaderUniformLocations[1], 1);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[2],hydrationRange);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[3],detectionThreshold);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[4],hydrationVelocity);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[5],hydrationStepSize);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
@@ -1265,6 +1338,8 @@ void WaterTable2::updateVegetation(GLContextData& contextData) const {
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject);
 	glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0);
+	glUniformARB(dataItem->vegetationShaderUniformLocations[1],vegStart);
+	glUniformARB(dataItem->vegetationShaderUniformLocations[2],vegEnd);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
@@ -1354,6 +1429,7 @@ void WaterTable2::updatePrevHydration(GLContextData& contextData) const {
 
 void WaterTable2::runVegetationSimulation(GLContextData& contextData) const {
 	updateHydration(contextData);
+	updatePrevHydration(contextData);
 	updateVegetation(contextData);
 }
 

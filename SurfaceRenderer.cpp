@@ -319,6 +319,19 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				\n";
 			}
 		
+		if(useVegetation)
+			{
+			fragmentDeclarations+="\
+				void addVegetationColor(in vec2, inout vec4);\n";
+
+			/* Compile the vegetation handling shader: */
+			shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
+
+			/* Call the vegetation coloring function from the fragment shader's main function: */
+			fragmentMain+="\
+				addVegetationColor(gl_FragCoord.xy,baseColor);\n\
+				\n";
+			}
 		if(drawContourLines)
 			{
 			/* Declare the contour line function: */
@@ -356,18 +369,27 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			/* Declare the water and vegetation handling functions: */
 			fragmentDeclarations+="\
 				void addWaterColor(in vec2,inout vec4);\n\
-				void addWaterColorAdvected(inout vec4);\n\
-				void addVegetationColor(in vec2, inout vec4);\n";
-			
+				void addWaterColorAdvected(inout vec4);\n";
+
 			/* Compile the water handling shader: */
 			shaders.push_back(compileFragmentShader("SurfaceAddWaterColor"));
-			/* Compile the vegetation handling shader: */
-			shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
+		
+#if 0
+			if(useVegetation)
+				{
+				fragmentDeclarations+="\
+					void addVegetationColor(in vec2, inout vec4);\n";
+
+				/* Compile the vegetation handling shader: */
+				shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
+
+				/* Call the vegetation coloring function from the fragment shader's main function: */
+				fragmentMain+="\
+					addVegetationColor(gl_FragCoord.xy,baseColor);\n\
+					\n";
+				}
+#endif
 			
-			/* Call the vegetation coloring function from the fragment shader's main function: */
-			fragmentMain+="\
-				addVegetationColor(gl_FragCoord.xy,baseColor);\n\
-				\n";
 			/* Call water coloring function from fragment shader's main function: */
 			if(advectWaterTexture)
 				{
@@ -434,7 +456,10 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 			*(ulPtr++)=glGetUniformLocationARB(result,"quantitySampler");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterOpacity");
 			*(ulPtr++)=glGetUniformLocationARB(result,"waterAnimationTime");
-			*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
+			if(useVegetation)
+				{
+				*(ulPtr++)=glGetUniformLocationARB(result,"vegetationSampler");
+				}
 
 			// Check any errors, just in case
 			GLenum err;
@@ -463,7 +488,8 @@ SurfaceRenderer::SurfaceRenderer(const unsigned int sSize[2],const SurfaceRender
 	 illuminate(false),waterTable(0),advectWaterTexture(false),surfaceSettingsVersion(1),
 	 waterOpacity(2.0f),
 	 depthImageVersion(1),
-	 animationTime(0.0)
+	 animationTime(0.0),
+	 useVegetation(false)
 	{
 	/* Monitor the external shader source files: */
 	fileMonitor.addPath((std::string(SHADERDIR)+std::string("/SurfaceAddContourLines.fs")).c_str(),IO::FileMonitor::Modified,Misc::createFunctionCall(this,&SurfaceRenderer::shaderSourceFileChanged));
@@ -695,6 +721,12 @@ void SurfaceRenderer::setAnimationTime(double newAnimationTime)
 	
 	/* Poll the file monitor: */
 	fileMonitor.processEvents();
+	}
+
+void SurfaceRenderer::setUseVegetation(bool newUseVegetation)
+	{
+	useVegetation=newUseVegetation;
+	++surfaceSettingsVersion;
 	}
 
 void SurfaceRenderer::glRenderDepthOnly(const SurfaceRenderer::PTransform& modelviewProjection,GLContextData& contextData) const
@@ -1107,19 +1139,22 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 		
 		/* Upload the water animation time: */
 		glUniform1fARB(*(ulPtr++),GLfloat(animationTime));
+		
+		if(useVegetation)
+			{
+			/* Bind the vegetation texture */
+			glActiveTextureARB(GL_TEXTURE5_ARB);
+			waterTable->bindVegetationTexture(contextData);
+			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+			glUniform1iARB(*(ulPtr++),5);
 
-		/* Bind the vegetation texture */
-		glActiveTextureARB(GL_TEXTURE5_ARB);
-		waterTable->bindVegetationTexture(contextData);
-		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-		glUniform1iARB(*(ulPtr++),5);
-
-		// Check any errors, just in case
-		GLenum err;
-		while((err = glGetError()) != GL_NO_ERROR) {
-			std::cerr << "OpenGL error: " << err << std::endl;
-		}
+			// Check any errors, just in case
+			GLenum err;
+			while((err = glGetError()) != GL_NO_ERROR) {
+				std::cerr << "OpenGL error: " << err << std::endl;
+			}
+			}
 
 		}
 	
@@ -1134,10 +1169,13 @@ void SurfaceRenderer::glRenderSinglePass(GLuint heightColorMapTexture,GLContextD
 	/* Unbind all textures and buffers: */
 	if(waterTable!=0)
 		{
-		glActiveTextureARB(GL_TEXTURE5_ARB);
-		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-		glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+		if(useVegetation)
+			{
+			glActiveTextureARB(GL_TEXTURE5_ARB);
+			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+			glBindTexture(GL_TEXTURE_RECTANGLE_ARB,0);
+			}
 		glActiveTextureARB(GL_TEXTURE4_ARB);
 		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_RECTANGLE_ARB,GL_TEXTURE_MAG_FILTER,GL_NEAREST);

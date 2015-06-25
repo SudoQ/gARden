@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #extension GL_ARB_texture_rectangle : enable
 
 uniform sampler2DRect hydrationSampler;
+uniform float vegStart;
+uniform float vegEnd;
 
 void main()
 	{
@@ -31,6 +33,7 @@ void main()
 
 	// The vegetation follows two logistics functions, S-curves
 	///*	
+	#if 0
 	float vegetation = 0.0;
 	float growthMidpoint = 0.3;
 	float decayMidpoint = 0.7;
@@ -42,25 +45,25 @@ void main()
 	} else if (hydration > top && hydration <= decayMidpoint){
 			vegetation = 1.0/(1.0 + exp(k * (hydration - decayMidpoint)));
 	}
-	//*/	
-	/*	
+	#else
 	float vegetation = 0.0;
-	float growth = 0.1;
-	float decay = 0.9;
+	//float growth = 0.05;
+	//float decay = 0.95;
+	float growth = vegStart;
+	float decay = vegEnd;
 	float top = ((decay-growth)/2.0)+growth;
 
 	float k1 = 1.0/(top-growth);
 	float k2 = 1.0/(top-decay);
 	float m1 = 1.0 - top*k1;
 	float m2 = 1.0 - top*k2;
-	//vegetation = hydration;
 	
 	if (hydration > growth && hydration < top){
 		vegetation = k1 * hydration + m1;
 	} else if (hydration > top && hydration < decay){
 		vegetation = k2 * hydration + m2;
 	}
-	*/	
+	#endif
 	
 	gl_FragColor=vec4(vegetation,0.0,0.0,0.0);
 	}

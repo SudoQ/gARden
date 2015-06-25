@@ -454,6 +454,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	 waterTable(0),waterSpeed(1.0),waterMaxSteps(30),rainStrength(0.25f),
 	 rmFrameFilter(0),rainMaker(0),addWaterFunction(0),addWaterFunctionRegistered(false),
 	 fixProjectorView(false),hillshade(false),useShadows(false),useHeightMap(false),
+	 useVegetation(true),
 	 waterRenderer(0),
 	 sun(0),
 	 mainMenu(0)
@@ -489,6 +490,14 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	double rainElevationMin=-1000.0;
 	double rainElevationMax=1000.0;
 	double evaporationRate=0.0;
+	double baseWaterLevel=-3.0f;
+	//bool useVegetation=true; 
+	double hydrationRange=0.1625;
+	double detectionThreshold=0.001;
+	double hydrationVelocity=0.01;
+	double vegStart=0.2;
+	double vegEnd=0.8;
+	double hydrationStepSize=2.0;
 	for(int i=1;i<argc;++i)
 		{
 		if(argv[i][0]=='-')
@@ -589,6 +598,40 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 				useHeightMap=true;
 			else if(strcasecmp(argv[i]+1,"rws")==0)
 				renderWaterSurface=true;
+			else if(strcasecmp(argv[i]+1,"bwl")==0)
+				{
+				++i;
+				baseWaterLevel=atof(argv[i]);
+				}
+			else if(strcasecmp(argv[i]+1,"nv")==0)
+				useVegetation=false;
+			else if(strcasecmp(argv[i]+1,"hr")==0)
+				{
+				++i;
+				hydrationRange=atof(argv[i]);
+				}
+			else if(strcasecmp(argv[i]+1,"dt")==0)
+				{
+				++i;
+				detectionThreshold=atof(argv[i]);
+				}
+			else if(strcasecmp(argv[i]+1,"hv")==0)
+				{
+				++i;
+				hydrationVelocity=atof(argv[i]);
+				}
+			else if(strcasecmp(argv[i]+1,"vr")==0)
+				{
+				++i;
+				vegStart=atof(argv[i]);
+				++i;
+				vegEnd=atof(argv[i]);
+				}
+			else if(strcasecmp(argv[i]+1,"hss")==0)
+				{
+				++i;
+				hydrationStepSize=atof(argv[i]);
+				}
 			}
 		}
 	
@@ -659,6 +702,26 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"     Enables elevation color mapping"<<std::endl;
 		std::cout<<"  -rws"<<std::endl;
 		std::cout<<"     Renders water surface as geometric surface"<<std::endl;
+		std::cout<<"  -bwl <base water level>"<<std::endl;
+		std::cout<<"     Base water level relative to the base plane"<<std::endl;
+		std::cout<<"     Default: -3.0"<<std::endl;
+		std::cout<<"  -nv"<<std::endl;
+		std::cout<<"     Disables vegetation surface rendering"<<std::endl;
+		std::cout<<"  -hr <hydration range>"<<std::endl;
+		std::cout<<"     Hydration range [0.0, 1.0]"<<std::endl;
+		std::cout<<"     Default: 0.1625"<<std::endl;
+		std::cout<<"  -dt <detection threshold>"<<std::endl;
+		std::cout<<"     Water detection threshold"<<std::endl;
+		std::cout<<"     Default: 0.001"<<std::endl;
+		std::cout<<"  -hv <hydration velocity>"<<std::endl;
+		std::cout<<"     Hydration velocity"<<std::endl;
+		std::cout<<"     Default: 0.01"<<std::endl;
+		std::cout<<"  -vr <vegetation min hydration> <vegetation max hydration>"<<std::endl;
+		std::cout<<"     Minimum and maximum vegetation hydration"<<std::endl;
+		std::cout<<"     Default: 0.2 0.8"<<std::endl;
+		std::cout<<"  -hss <hydration step size>"<<std::endl;
+		std::cout<<"     Hydration step size"<<std::endl;
+		std::cout<<"     Default: 2"<<std::endl;
 		}
 	
 	/* Enable background USB event handling: */
@@ -810,7 +873,13 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	/* Initialize the water flow simulator: */
 	waterTable=new WaterTable2(wtSize[0],wtSize[1],basePlane,basePlaneCorners);
 	waterTable->setElevationRange(elevationMin,rainElevationMax);
+	waterTable->setBaseWaterLevel(baseWaterLevel);
 	waterTable->setWaterDeposit(evaporationRate);
+	waterTable->setHydrationRange(hydrationRange);
+	waterTable->setDetectionThreshold(detectionThreshold);
+	waterTable->setHydrationVelocity(hydrationVelocity);
+	waterTable->setHydrationStepSize(hydrationStepSize);
+	waterTable->setVegetationRange(vegStart, vegEnd);
 	
 	/* Register a render function with the water table: */
 	addWaterFunction=Misc::createFunctionCall(this,&Sandbox::addWater);
@@ -823,6 +892,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	surfaceRenderer->setHeightMapRange(heightMap.getNumEntries(),heightMap.getScalarRangeMin(),heightMap.getScalarRangeMax());
 	surfaceRenderer->setDrawContourLines(useContourLines);
 	surfaceRenderer->setContourLineDistance(contourLineSpacing);
+	surfaceRenderer->setUseVegetation(useVegetation);
 	if(hillshade)
 		surfaceRenderer->setIlluminate(true);
 	if(waterTable!=0&&waterSpeed>0.0)
@@ -951,10 +1021,12 @@ void Sandbox::display(GLContextData& contextData) const
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
 		
-		//waterTable->runVegetationSimulation(contextData);
-		waterTable->updateHydration(contextData);
-		waterTable->updatePrevHydration(contextData);
-		waterTable->updateVegetation(contextData);
+		if(useVegetation){
+			waterTable->runVegetationSimulation(contextData);
+			//waterTable->updateHydration(contextData);
+			//waterTable->updatePrevHydration(contextData);
+			//waterTable->updateVegetation(contextData);
+		}
 		
 		}
 	if(fixProjectorView)
