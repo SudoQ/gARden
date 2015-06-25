@@ -26,6 +26,7 @@ uniform sampler2DRect derivativeSampler;
 uniform sampler2DRect prevHydrationSampler;
 uniform float hydrationRange;
 uniform float detectionThreshold;
+uniform float hydrationVelocity;
 
 void main()
 	{
@@ -61,8 +62,7 @@ void main()
 	}
 	maxHydration = maxHydration/n; // The average water coverage
 	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord.xy).r;	
-	//float previousHydration = gl_FragColor.r;
-	float velocity = 0.01;
+	float velocity = hydrationVelocity;
 	float newHydration = previousHydration + (maxHydration - previousHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
