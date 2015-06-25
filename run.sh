@@ -1,4 +1,4 @@
 PROJDIR="/home/sandbox/src/SARndbox"
 VRUICFG="$PROJDIR/etc/SARndbox-1.5/Vrui.cfg"
-SBOPT="-rs 0.0 -evr -0.01 -fpv"
+SBOPT="-rs 0.0 -evr -0.01 -fpv -hr 0.1625 -dt 0.001 -hv 0.01"
 $PROJDIR/bin/SARndbox -loadInputGraph $PROJDIR/SavedInputGraph0001.inputgraph -mergeConfig $VRUICFG $SBOPT
