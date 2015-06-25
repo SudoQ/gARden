@@ -44,8 +44,9 @@ void main()
 	vec3 q=texture2DRect(quantitySampler,gl_FragCoord.xy).rgb;
 
 	/* Update the water surface height: */
-	//gl_FragColor=vec4(max(q.x-bOld,0.0)+bNew,q.yz,0.0);
-	
+	#if 0
+	gl_FragColor=vec4(max(q.x-bOld,0.0)+bNew,q.yz,0.0);
+	#else	
 	float height = max(q.x-bOld,0.0)+bNew;
 	float xValue = height;
 	if (gl_FragCoord.x < (0.05 * texWidth) || gl_FragCoord.x > (0.95 * texWidth)){}
@@ -58,6 +59,6 @@ void main()
 	}
 	
 	gl_FragColor=vec4(xValue,q.yz,0.0);
-	
+	#endif	
 	
 	}
