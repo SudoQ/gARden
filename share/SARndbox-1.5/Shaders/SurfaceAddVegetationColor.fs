@@ -71,54 +71,48 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 	*/
 	// TODO Move to seperate color map
 	vec4 vegColor;
-	vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0/255.0, 1.0);
-	vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0/255.0, 1.0); 
-	vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0/255.0, 1.0);
-	vec4 color3 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
-	vec4 color4 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
-	vec4 color5 =		vec4(208.0/255.0,	233.0/255.0,	0.0, 1.0);
-	vec4 color6 =		vec4(185.0/255.0,	207.0/255.0,	0.0, 1.0);
-	vec4 color7 =		vec4(162.0/255.0,	192.0/255.0,	0.0, 1.0);
-	vec4 color8 =		vec4(139.0/255.0,	176.0/255.0,	0.0, 1.0);
-	vec4 color9 =		vec4(118.0/255.0,	158.0/255.0,	0.0, 1.0);
-	vec4 color10 =	vec4(90.0/255.0,	142.0/255.0,	0.0, 1.0);
-	vec4 color11 =	vec4(69.0/255.0,	128.0/255.0,	0.0, 1.0);
-	vec4 color12 =	vec4(45.0/255.0,	112.0/255.0,	0.0, 1.0);
-	vec4 color13 =	vec4(23.0/255.0,	97.0/255.0,	0.0, 1.0);
-	vec4 color14 =	vec4(0.0/255.0,		82.0/255.0,	0.0, 1.0);
+	//vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0/255.0, 1.0);
+	//vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0/255.0, 1.0); 
+	//vec4 color2 =		vec4(192.0/255.0,	163.0/255.0, 	69.0/255.0, 1.0);
+	vec4 color0 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
+	vec4 color1 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
+	vec4 color2 =		vec4(208.0/255.0,	233.0/255.0,	0.0, 1.0);
+	vec4 color3 =		vec4(185.0/255.0,	207.0/255.0,	0.0, 1.0);
+	vec4 color4 =		vec4(162.0/255.0,	192.0/255.0,	0.0, 1.0);
+	vec4 color5 =		vec4(139.0/255.0,	176.0/255.0,	0.0, 1.0);
+	vec4 color6 =		vec4(118.0/255.0,	158.0/255.0,	0.0, 1.0);
+	vec4 color7 =		vec4(90.0/255.0,	142.0/255.0,	0.0, 1.0);
+	vec4 color8 =		vec4(69.0/255.0,	128.0/255.0,	0.0, 1.0);
+	vec4 color9 =		vec4(45.0/255.0,	112.0/255.0,	0.0, 1.0);
+	vec4 color10 =	vec4(23.0/255.0,	97.0/255.0,	0.0, 1.0);
+	vec4 color11 =	vec4(0.0/255.0,		82.0/255.0,	0.0, 1.0);
 	if(veg > 0.0){
-		if(veg <= 1.0/15.0){
+		if(veg <= 1.0/12.0){
 				vegColor = color0;
-		} else if(veg <= 2.0/15.0) {
+		} else if(veg <= 2.0/12.0) {
 				vegColor = color1;
-		} else if(veg <= 3.0/15.0) {
+		} else if(veg <= 3.0/12.0) {
 				vegColor = color2;
-		} else if(veg <= 4.0/15.0) {
+		} else if(veg <= 4.0/12.0) {
 				vegColor = color3;
-		} else if(veg <= 5.0/15.0) {
+		} else if(veg <= 5.0/12.0) {
 				vegColor = color4;
-		} else if(veg <= 6.0/15.0) {
+		} else if(veg <= 6.0/12.0) {
 				vegColor = color5;
-		} else if(veg <= 7.0/15.0) {
+		} else if(veg <= 7.0/12.0) {
 				vegColor = color6;
-		} else if(veg <= 8.0/15.0) {
+		} else if(veg <= 8.0/12.0) {
 				vegColor = color7;
-		} else if(veg <= 9.0/15.0) {
+		} else if(veg <= 9.0/12.0) {
 				vegColor = color8;
-		} else if(veg <= 10.0/15.0) {
+		} else if(veg <= 10.0/12.0) {
 				vegColor = color9;
-		} else if(veg <= 11.0/15.0) {
+		} else if(veg <= 11.0/12.0) {
 				vegColor = color10;
-		} else if(veg <= 12.0/15.0) {
-				vegColor = color11;
-		} else if(veg <= 13.0/16.0) {
-				vegColor = color12;
-		} else if(veg <= 14.0/15.0) {
-				vegColor = color13;
 		} else {
-				vegColor = color14;
+				vegColor = color11;
 		}
-		baseColor=mix(baseColor, vegColor, 1.0);
+		baseColor=mix(baseColor, vegColor, 0.8);
 	}
 
 	}
