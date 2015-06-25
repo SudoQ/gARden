@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #extension GL_ARB_texture_rectangle : enable
 
 uniform sampler2DRect hydrationSampler;
+uniform float vegStart;
+uniform float vegEnd;
 
 void main()
 	{
@@ -45,8 +47,10 @@ void main()
 	}
 	#else
 	float vegetation = 0.0;
-	float growth = 0.1;
-	float decay = 0.9;
+	//float growth = 0.05;
+	//float decay = 0.95;
+	float growth = vegStart;
+	float decay = vegEnd;
 	float top = ((decay-growth)/2.0)+growth;
 
 	float k1 = 1.0/(top-growth);

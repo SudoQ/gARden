@@ -94,10 +94,10 @@ class WaterTable2:public GLObject
 		GLuint prevHydrationFramebufferObject;
 
 		GLhandleARB vegetationShader;
-		GLint vegetationShaderUniformLocations[1];
+		GLint vegetationShaderUniformLocations[3];
 
 		GLhandleARB hydrationShader;
-		GLint hydrationShaderUniformLocations[5];
+		GLint hydrationShaderUniformLocations[6];
 
 		GLhandleARB prevHydrationShader;
 		GLint prevHydrationShaderUniformLocations[1];
@@ -126,6 +126,9 @@ class WaterTable2:public GLObject
 	GLfloat hydrationRange;
 	GLfloat detectionThreshold;
 	GLfloat hydrationVelocity;
+	GLfloat hydrationStepSize;
+	GLfloat vegStart;
+	GLfloat vegEnd;
 	
 	/* Private methods: */
 	GLfloat calcDerivative(DataItem* dataItem,GLuint quantityTextureObject,bool calcMaxStepSize) const; // Calculates the temporal derivative of the conserved quantities in the given texture object and returns maximum step size if flag is true
@@ -159,6 +162,8 @@ class WaterTable2:public GLObject
 	void setHydrationRange(GLfloat newHydrationRangeRatio); // Sets the hydration range
 	void setDetectionThreshold(GLfloat newDetectionThreshold); // Sets the hydration water detection threshold
 	void setHydrationVelocity(GLfloat newHydrationVelocity); // Sets the hydration velocity
+	void setHydrationStepSize(GLfloat newStepSize); // Sets the hydration shader range step size
+	void setVegetationRange(GLfloat newVegStart, GLfloat newVegEnd); // Sets the start and end hydration values
 	void updateBathymetry(const SurfaceRenderer& bathymetryRenderer,GLContextData& contextData) const; // Renders the given surface into the bathymetry grid used for subsequent simulation steps
 	GLfloat runSimulationStep(GLContextData& contextData) const; // Runs a water flow simulation step; returns step size taken by Runge-Kutta integration step
 	void runVegetationSimulation(GLContextData& contextData) const;

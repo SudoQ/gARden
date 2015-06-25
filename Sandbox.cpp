@@ -494,6 +494,9 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	double hydrationRange=0.1625;
 	double detectionThreshold=0.001;
 	double hydrationVelocity=0.01;
+	double vegStart=0.2;
+	double vegEnd=0.8;
+	double hydrationStepSize=2.0;
 	for(int i=1;i<argc;++i)
 		{
 		if(argv[i][0]=='-')
@@ -611,6 +614,18 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 				++i;
 				hydrationVelocity=atof(argv[i]);
 				}
+			else if(strcasecmp(argv[i]+1,"vr")==0)
+				{
+				++i;
+				vegStart=atof(argv[i]);
+				++i;
+				vegEnd=atof(argv[i]);
+				}
+			else if(strcasecmp(argv[i]+1,"hss")==0)
+				{
+				++i;
+				hydrationStepSize=atof(argv[i]);
+				}
 			}
 		}
 	
@@ -692,6 +707,12 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"  -hv <hydration velocity>"<<std::endl;
 		std::cout<<"     Hydration velocity"<<std::endl;
 		std::cout<<"     Default: 0.01"<<std::endl;
+		std::cout<<"  -vr <vegetation min hydration> <vegetation max hydration>"<<std::endl;
+		std::cout<<"     Minimum and maximum vegetation hydration"<<std::endl;
+		std::cout<<"     Default: 0.2 0.8"<<std::endl;
+		std::cout<<"  -hss <hydration step size>"<<std::endl;
+		std::cout<<"     Hydration step size"<<std::endl;
+		std::cout<<"     Default: 2"<<std::endl;
 		}
 	
 	/* Enable background USB event handling: */
@@ -847,6 +868,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	waterTable->setHydrationRange(hydrationRange);
 	waterTable->setDetectionThreshold(detectionThreshold);
 	waterTable->setHydrationVelocity(hydrationVelocity);
+	waterTable->setHydrationStepSize(hydrationStepSize);
+	waterTable->setVegetationRange(vegStart, vegEnd);
 	
 	/* Register a render function with the water table: */
 	addWaterFunction=Misc::createFunctionCall(this,&Sandbox::addWater);

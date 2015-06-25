@@ -27,6 +27,7 @@ uniform sampler2DRect prevHydrationSampler;
 uniform float hydrationRange;
 uniform float detectionThreshold;
 uniform float hydrationVelocity;
+uniform float hydrationStepSize;
 
 void main()
 	{
@@ -40,7 +41,7 @@ void main()
 	#endif
 	float start = -1.0*(range/2.0);
 	float end = range/2.0;
-	float step = 1.0;
+	float step = hydrationStepSize;
 	for(float i=start; i<end; i+=step){
 		for(float j=start; j<end; j+=step){
 			n++;
