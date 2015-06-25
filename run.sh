@@ -1,3 +1,11 @@
 PROJDIR="/home/sandbox/src/SARndbox"
 VRUICFG="$PROJDIR/etc/SARndbox-1.5/Vrui.cfg"
-$PROJDIR/bin/SARndbox -loadInputGraph $PROJDIR/SavedInputGraph0002.inputgraph -mergeConfig $VRUICFG -evr -0.01 -rs 0.25 -rer 28 60
+RAIN_STR="0.0"
+EVR="-0.01"
+HYDR_RANGE="0.32"
+HYDR_DT="0.001"
+HYDR_VELOCITY="0.01"
+HYDR_SS="3.0"
+VEG_RANGE="0.2 0.8"
+OPTS="-fpv -rs $RAIN_STR -evr $EVR -hr $HYDR_RANGE -dt $HYDR_DT -hv $HYDR_VELOCITY -hss $HYDR_SS -vr $VEG_RANGE"
+$PROJDIR/bin/SARndbox -loadInputGraph $PROJDIR/SavedInputGraph0001.inputgraph -mergeConfig $VRUICFG $OPTS

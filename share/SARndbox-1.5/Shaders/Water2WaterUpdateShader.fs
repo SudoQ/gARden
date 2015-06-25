@@ -43,6 +43,14 @@ void main()
 	
 	/* Update the water surface height: */
 	q.x=hNew+b;
+	/*
+	float height = hNew+b;
+	float minimum = -1.0;
+	if ( height < minimum ) {
+		height = minimum;			
+	}
+	q.x = height;
+	*/
 	
 	/* Update the partial discharges: */
 	q.yz=hNew==0.0?vec2(0.0,0.0):(hNew<hOld?q.yz*(hNew/hOld):q.yz); // New water is added with zero velocity; water is removed at current velocity
