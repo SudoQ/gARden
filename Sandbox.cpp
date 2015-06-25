@@ -664,7 +664,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"  -rws"<<std::endl;
 		std::cout<<"     Renders water surface as geometric surface"<<std::endl;
 		std::cout<<"  -nv"<<std::endl;
-		std::cout<<"     Enables vegetation surface rendering"<<std::endl;
+		std::cout<<"     Disables vegetation surface rendering"<<std::endl;
 		}
 	
 	/* Enable background USB event handling: */

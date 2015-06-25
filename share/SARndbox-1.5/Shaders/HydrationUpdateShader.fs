@@ -62,7 +62,7 @@ void main()
 	maxHydration = maxHydration/n; // The average water coverage
 	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord.xy).r;	
 	//float previousHydration = gl_FragColor.r;
-	float velocity = 0.0025;
+	float velocity = 0.01;
 	float newHydration = previousHydration + (maxHydration - previousHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
