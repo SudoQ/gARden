@@ -319,6 +319,19 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 				\n";
 			}
 		
+		if(useVegetation)
+			{
+			fragmentDeclarations+="\
+				void addVegetationColor(in vec2, inout vec4);\n";
+
+			/* Compile the vegetation handling shader: */
+			shaders.push_back(compileFragmentShader("SurfaceAddVegetationColor"));
+
+			/* Call the vegetation coloring function from the fragment shader's main function: */
+			fragmentMain+="\
+				addVegetationColor(gl_FragCoord.xy,baseColor);\n\
+				\n";
+			}
 		if(drawContourLines)
 			{
 			/* Declare the contour line function: */
@@ -360,7 +373,8 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 
 			/* Compile the water handling shader: */
 			shaders.push_back(compileFragmentShader("SurfaceAddWaterColor"));
-
+		
+#if 0
 			if(useVegetation)
 				{
 				fragmentDeclarations+="\
@@ -374,6 +388,7 @@ GLhandleARB SurfaceRenderer::createSinglePassSurfaceShader(const GLLightTracker&
 					addVegetationColor(gl_FragCoord.xy,baseColor);\n\
 					\n";
 				}
+#endif
 			
 			/* Call water coloring function from fragment shader's main function: */
 			if(advectWaterTexture)
