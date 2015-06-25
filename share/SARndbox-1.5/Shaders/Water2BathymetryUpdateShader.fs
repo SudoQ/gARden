@@ -50,8 +50,8 @@ void main()
 	#else	
 	float height = max(q.x-bOld,0.0)+bNew;
 	float xValue = height;
-	if (gl_FragCoord.x < (0.05 * texWidth) || gl_FragCoord.x > (0.95 * texWidth)){}
-	else if (gl_FragCoord.y < (0.05 * texHeight) || gl_FragCoord.y > (0.95 * texHeight)){}
+	if (gl_FragCoord.x < (0.02 * texWidth) || gl_FragCoord.x > (0.98 * texWidth)){}
+	else if (gl_FragCoord.y < (0.02 * texHeight) || gl_FragCoord.y > (0.98 * texHeight)){}
 	else {
 		float minimum = baseWaterLevel;
 		if (height < minimum) {
