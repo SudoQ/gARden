@@ -340,6 +340,7 @@ WaterTable2::WaterTable2(GLsizei width,GLsizei height,const Plane& basePlane,con
 	/* Initialize the vegetation simulation parameters */
 	hydrationRange = static_cast<GLfloat>(height) * 0.1625;
 	detectionThreshold = 0.001;
+	hydrationVelocity = 0.01;
 	}
 
 WaterTable2::~WaterTable2(void)
@@ -715,6 +716,8 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	dataItem->hydrationShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->hydrationShader,"prevHydrationSampler");
 	dataItem->hydrationShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->hydrationShader,"hydrationRange");
 	dataItem->hydrationShaderUniformLocations[3]=glGetUniformLocationARB(dataItem->hydrationShader,"detectionThreshold");
+	dataItem->hydrationShaderUniformLocations[4]=glGetUniformLocationARB(dataItem->hydrationShader,"hydrationVelocity");
+
 	}
 	{
 	GLhandleARB vertexShader=glCompileVertexShaderFromString(vertexShaderSource);
@@ -857,6 +860,27 @@ void WaterTable2::setElevationRange(WaterTable2::Scalar newMin,WaterTable2::Scal
 void WaterTable2::setMaxStepSize(GLfloat newMaxStepSize)
 	{
 	maxStepSize=newMaxStepSize;
+	}
+
+void WaterTable2::setHydrationRange(GLfloat newHydrationRangeRatio)
+	{
+	if(newHydrationRangeRatio >= 0.0 && newHydrationRangeRatio <= 1.0)
+		{
+		hydrationRange = static_cast<GLfloat>(size[1]) * newHydrationRangeRatio;
+		}
+	}
+
+void WaterTable2::setDetectionThreshold(GLfloat newDetectionThreshold)
+	{
+	detectionThreshold = newDetectionThreshold;	
+	}
+
+void WaterTable2::setHydrationVelocity(GLfloat newHydrationVelocity)
+	{
+	if(newHydrationVelocity > 0.0 && newHydrationVelocity <= 1.0)
+		{
+		hydrationVelocity = newHydrationVelocity;
+		}
 	}
 
 void WaterTable2::addRenderFunction(const AddWaterFunction* newRenderFunction)
@@ -1222,6 +1246,7 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glUniform1iARB(dataItem->hydrationShaderUniformLocations[1], 1);
 	glUniformARB(dataItem->hydrationShaderUniformLocations[2],hydrationRange);
 	glUniformARB(dataItem->hydrationShaderUniformLocations[3],detectionThreshold);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[4],hydrationVelocity);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
