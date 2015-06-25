@@ -338,7 +338,7 @@ WaterTable2::WaterTable2(GLsizei width,GLsizei height,const Plane& basePlane,con
 	waterDeposit=0.0f;
 
 	/* Initialize the vegetation simulation parameters */
-	hydrationRange = static_cast<GLfloat>(width) * 0.1625;
+	hydrationRange = static_cast<GLfloat>(height) * 0.1625;
 	detectionThreshold = 0.001;
 	}
 
@@ -1220,8 +1220,8 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glActiveTextureARB(GL_TEXTURE1_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->prevHydrationTextureObject);
 	glUniform1iARB(dataItem->hydrationShaderUniformLocations[1], 1);
-	glUniformARB(dataItem->derivativeShaderUniformLocations[2],hydrationRange);
-	glUniformARB(dataItem->derivativeShaderUniformLocations[3],detectionThreshold);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[2],hydrationRange);
+	glUniformARB(dataItem->hydrationShaderUniformLocations[3],detectionThreshold);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);
