@@ -24,13 +24,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 uniform sampler2DRect derivativeSampler;
 uniform sampler2DRect prevHydrationSampler;
+uniform float hydrationRange;
+uniform float detectionThreshold;
 
 void main()
 	{
 	// Search the surronding pixels for water
 	float n = 0.0;
 	float maxHydration = 0.0;
+	#if 0
 	float range = 80.0; // Range in pixels
+	#else
+	float range = hydrationRange;
+	#endif
 	float start = -1.0*(range/2.0);
 	float end = range/2.0;
 	float step = 1.0;
@@ -41,9 +47,14 @@ void main()
 			float water = 0.0;
 				
 			// Water detection
+			#if 0
 			if (abs(deriv0) > 0.001){
+			#else
+			if (abs(deriv0) > detectionThreshold){
+			#endif
 				water = 1.0;
 			}
+
 			
 			maxHydration += water;
 		}

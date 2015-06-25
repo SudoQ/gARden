@@ -97,7 +97,7 @@ class WaterTable2:public GLObject
 		GLint vegetationShaderUniformLocations[1];
 
 		GLhandleARB hydrationShader;
-		GLint hydrationShaderUniformLocations[2];
+		GLint hydrationShaderUniformLocations[4];
 
 		GLhandleARB prevHydrationShader;
 		GLint prevHydrationShaderUniformLocations[1];
@@ -121,6 +121,10 @@ class WaterTable2:public GLObject
 	GLfloat waterTextureMatrix[16]; // An OpenGL-conforming matrix expressing the transformation from camera space to water level texture space
 	std::vector<const AddWaterFunction*> renderFunctions; // A list of functions that are called after each water flow simulation step to locally add or remove water from the water table
 	GLfloat waterDeposit; // A fixed amount of water added at every iteration of the flow simulation, for evaporation etc.
+
+	// Vegetation simulation parameters
+	GLfloat hydrationRange;
+	GLfloat detectionThreshold;
 	
 	/* Private methods: */
 	GLfloat calcDerivative(DataItem* dataItem,GLuint quantityTextureObject,bool calcMaxStepSize) const; // Calculates the temporal derivative of the conserved quantities in the given texture object and returns maximum step size if flag is true
