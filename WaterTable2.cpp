@@ -95,6 +95,14 @@ GLhandleARB compileFragmentShader(const char* shaderFileName)
 	return glCompileFragmentShaderFromFile(fullShaderFileName.c_str());
 	}
 
+void glErrorCheck()
+	{
+	GLuint err;
+	while((err = glGetError()) != GL_NO_ERROR) 
+		{
+		std::cerr << "OpenGL error: " << err << std::endl;
+		}
+	}
 }
 
 /**************************************
@@ -457,10 +465,7 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,v);
 	delete[] v;
 	// Check any errors, just in case
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR) {
-		std::cerr << "OpenGL error: " << err << std::endl;
-	}
+	glErrorCheck();
 	}
 	{
 	/* Create the hydration texture */
@@ -474,11 +479,7 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,h);
 	delete[] h;
 	// Check any errors, just in case
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR)
-		{
-		std::cerr << "OpenGL error: " << err << std::endl;
-		}
+	glErrorCheck();
 	}
 
 	{
@@ -493,11 +494,7 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,0,GL_R32F,size[0],size[1],0,GL_RED,GL_FLOAT,p);
 	delete[] p;
 	// Check any errors, just in case
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR)
-		{
-		std::cerr << "OpenGL error: " << err << std::endl;
-		}
+	glErrorCheck();
 	}
 	
 	/* Protect the newly-created textures: */
@@ -1297,11 +1294,7 @@ void WaterTable2::updateHydration(GLContextData& contextData) const {
 	glVertex2i(0,size[1]);
 	glEnd();
 	
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR) 
-		{
-		std::cerr << "OpenGL error: " << err << std::endl;
-		}
+	glErrorCheck();
 
 	/* Unbind all shaders and textures: */
 	glUseProgramObjectARB(0);
@@ -1356,11 +1349,7 @@ void WaterTable2::updateVegetation(GLContextData& contextData) const {
 	glVertex2i(0,size[1]);
 	glEnd();
 	
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR) 
-		{
-		std::cerr << "OpenGL error: " << err << std::endl;
-		}
+	glErrorCheck();
 
 	/* Unbind all shaders and textures: */
 	glUseProgramObjectARB(0);
@@ -1412,11 +1401,7 @@ void WaterTable2::updatePrevHydration(GLContextData& contextData) const {
 	glVertex2i(0,size[1]);
 	glEnd();
 	
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR) 
-		{
-		std::cerr << "OpenGL error: " << err << std::endl;
-		}
+	glErrorCheck();
 
 	/* Unbind all shaders and textures: */
 	glUseProgramObjectARB(0);
