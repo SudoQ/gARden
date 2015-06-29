@@ -63,11 +63,17 @@ class WaterTable2:public GLObject
 		GLuint maxStepSizeTextureObjects[2]; // Double-buffered one-component color texture objects to gather the maximum step size for Runge-Kutta integration steps
 		GLuint quantityStarTextureObject; // Three-component color texture object holding the cell-centered intermediate Runge-Kutta state grid
 		GLuint waterTextureObject; // One-component color texture object to add or remove water to/from the conserved quantity grid
+		GLuint vegetationTextureObject; // One-component color texture object holding the current vegetation values
+		GLuint hydrationTextureObject; // One-component color texture object holding the current hydration values
+		GLuint prevHydrationTextureObject; // One-component color texture object holding the previous frames hydration values
 		GLuint bathymetryFramebufferObject; // Frame buffer used to render the bathymetry surface into the bathymetry grid
 		GLuint derivativeFramebufferObject; // Frame buffer used for temporal derivative computation
 		GLuint maxStepSizeFramebufferObject; // Frame buffer used to calculate the maximum integration step size
 		GLuint integrationFramebufferObject; // Frame buffer used for the Euler and Runge-Kutta integration steps
 		GLuint waterFramebufferObject; // Frame buffer used for the water rendering step
+		GLuint vegetationFramebufferObject; // Frame buffer used to calculate the current vegetation values from the hydration texture
+		GLuint hydrationFramebufferObject; // Frame buffer used to calculate the current hydration texture
+		GLuint prevHydrationFramebufferObject; // Frame buffer used render the previous hydration texture
 		GLhandleARB bathymetryShader; // Shader to update cell-centered conserved quantities after a change to the bathymetry grid
 		GLint bathymetryShaderUniformLocations[6];
 		GLhandleARB derivativeShader; // Shader to compute face-centered partial fluxes and cell-centered temporal derivatives
@@ -84,22 +90,11 @@ class WaterTable2:public GLObject
 		GLint waterAddShaderUniformLocations[2];
 		GLhandleARB waterShader; // Shader to add or remove water from the conserved quantities grid
 		GLint waterShaderUniformLocations[3];
-
-		GLuint vegetationTextureObject;
-		GLuint hydrationTextureObject;
-		GLuint prevHydrationTextureObject;
-
-		GLuint vegetationFramebufferObject;
-		GLuint hydrationFramebufferObject;
-		GLuint prevHydrationFramebufferObject;
-
-		GLhandleARB vegetationShader;
+		GLhandleARB vegetationShader; // Shader to update the vegetation values
 		GLint vegetationShaderUniformLocations[3];
-
-		GLhandleARB hydrationShader;
+		GLhandleARB hydrationShader; // Shader to update the current hydration values
 		GLint hydrationShaderUniformLocations[6];
-
-		GLhandleARB prevHydrationShader;
+		GLhandleARB prevHydrationShader; // Shader to update the previous frames hydration values
 		GLint prevHydrationShaderUniformLocations[1];
 		
 		/* Constructors and destructors: */
@@ -124,12 +119,12 @@ class WaterTable2:public GLObject
 	GLfloat baseWaterLevel; // Base water level relative to the base plane
 
 	// Vegetation simulation parameters
-	GLfloat hydrationRange;
-	GLfloat detectionThreshold;
-	GLfloat hydrationVelocity;
-	GLfloat hydrationStepSize;
-	GLfloat vegStart;
-	GLfloat vegEnd;
+	GLfloat hydrationRange; // The hydration coverage in pixels
+	GLfloat detectionThreshold; // Threshold value used in the hydration shader for detecting water
+	GLfloat hydrationVelocity; // Hydration preservation factor, determines the velocity of which the hydration changes
+	GLfloat hydrationStepSize; // Step size used by the hydration shader to calcluate the current hydration, greater values increases performance but reduces accuracy.
+	GLfloat vegStart; // The minimum hydration value needed to produce vegetation values
+	GLfloat vegEnd; // The maximum hydration value needed to produce vegetation values
 	
 	/* Private methods: */
 	GLfloat calcDerivative(DataItem* dataItem,GLuint quantityTextureObject,bool calcMaxStepSize) const; // Calculates the temporal derivative of the conserved quantities in the given texture object and returns maximum step size if flag is true
@@ -168,27 +163,29 @@ class WaterTable2:public GLObject
 	void setVegetationRange(GLfloat newVegStart, GLfloat newVegEnd); // Sets the start and end hydration values
 	void updateBathymetry(const SurfaceRenderer& bathymetryRenderer,GLContextData& contextData) const; // Renders the given surface into the bathymetry grid used for subsequent simulation steps
 	GLfloat runSimulationStep(GLContextData& contextData) const; // Runs a water flow simulation step; returns step size taken by Runge-Kutta integration step
-	void runVegetationSimulation(GLContextData& contextData) const;
-	void updateVegetation(GLContextData& contextData) const;
-	void updateHydration(GLContextData& contextData) const;
-	void updatePrevHydration(GLContextData& contextData) const;
+	void runVegetationSimulation(GLContextData& contextData) const; // Performs one vegetation simulation step
+	void updateVegetation(GLContextData& contextData) const; // Updates the vegetation texture 
+	void updateHydration(GLContextData& contextData) const; // Update the hydration texture
+	void updatePrevHydration(GLContextData& contextData) const; // Update the previous hydration texture
 	void bindBathymetryTexture(GLContextData& contextData) const; // Binds the bathymetry texture object to the active texture unit
 	void bindQuantityTexture(GLContextData& contextData) const; // Binds the most recent conserved quantities texture object to the active texture unit
-	void bindVegetationTexture(GLContextData& contextData) const; // Binds the vegetation texture
-	void bindWaterTexture(GLContextData& contextData) const;
-	void bindDerivativeTexture(GLContextData& contextData) const;
-	void bindHydrationTexture(GLContextData& contextData) const;
-	void bindPrevHydrationTexture(GLContextData& contextData) const;
+	void bindVegetationTexture(GLContextData& contextData) const; // Binds the vegetation texture object to the active texture unit
+	void bindWaterTexture(GLContextData& contextData) const; // Binds the water texture object to the active texture unit
+	void bindDerivativeTexture(GLContextData& contextData) const; // Binds the derivative water texture object to the active texture unit
+	void bindHydrationTexture(GLContextData& contextData) const; // Binds the current hydration texture object to the active texture unit
+	void bindPrevHydrationTexture(GLContextData& contextData) const; // Binds the previous hydration texture object to the active texture unit
 	const GLfloat* getWaterTextureMatrix(void) const // Returns the matrix transforming from camera space into water texture space
 		{
 		return waterTextureMatrix;
 		}
-		const GLsizei getWidth(void) {
-			return size[0];
+	const GLsizei getWidth(void) // Returns the water tables width
+		{
+		return size[0];
 		}
 
-		const GLsizei getHeight(void) {
-			return size[1];
+	const GLsizei getHeight(void) // Returns the water tables height
+		{
+		return size[1];
 		}
 	};
 
