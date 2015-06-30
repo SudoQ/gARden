@@ -38,8 +38,6 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor)
 	float veg = texture2DRect(vegetationSampler, waterLevelTexCoord).r; // Read vegetation value
 
 	vec4 vegColor;
-	//vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0/255.0, 1.0);
-	//vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0/255.0, 1.0); 
 	vec4 color0 =		vec4(247.0/255.0,	232.0/255.0, 	90.0/255.0, 1.0);
 	vec4 color1 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
 	vec4 color2 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);

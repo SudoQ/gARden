@@ -1,5 +1,7 @@
 /***********************************************************************
 VegetationUpdateShader - Shader to update the current vegetation level
+The vegetation value is calculated by applying two linear functions to
+simulate vegetation growth and decay.
 Copyright (c) 2015 Simon Johansson
 
 This file is part of the Vegetation Augmented Reality Sandbox (gARden).
@@ -25,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #extension GL_ARB_texture_rectangle : enable
 
 uniform sampler2DRect hydrationSampler;
-uniform float vegStart;
-uniform float vegEnd;
+uniform float minHydration;
+uniform float maxHydration;
 
 void main()
 	{
@@ -45,8 +47,8 @@ void main()
 	}
 	#else
 	float vegetation = 0.0;
-	float growth = vegStart;
-	float decay = vegEnd;
+	float growth = minHydration;
+	float decay = maxHydration;
 	float top = ((decay-growth)/2.0)+growth;
 
 	float k1 = 1.0/(top-growth);

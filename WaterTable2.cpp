@@ -353,8 +353,8 @@ WaterTable2::WaterTable2(GLsizei width,GLsizei height,const Plane& basePlane,con
 	detectionThreshold = 0.001f;
 	hydrationVelocity = 0.01f;
 	hydrationStepSize = 2.0f;
-	vegStart = 0.2f;
-	vegEnd = 0.8f;
+	minHydration = 0.2f;
+	maxHydration = 0.8f;
 	}
 
 WaterTable2::~WaterTable2(void)
@@ -709,8 +709,8 @@ void WaterTable2::initContext(GLContextData& contextData) const
 	glDeleteObjectARB(vertexShader);
 	glDeleteObjectARB(fragmentShader);
 	dataItem->vegetationShaderUniformLocations[0]=glGetUniformLocationARB(dataItem->vegetationShader,"hydrationSampler");
-	dataItem->vegetationShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->vegetationShader,"vegStart");
-	dataItem->vegetationShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->vegetationShader,"vegEnd");
+	dataItem->vegetationShaderUniformLocations[1]=glGetUniformLocationARB(dataItem->vegetationShader,"minHydration");
+	dataItem->vegetationShaderUniformLocations[2]=glGetUniformLocationARB(dataItem->vegetationShader,"maxHydration");
 	}
 
 	/* Create the hydration shader */
@@ -911,11 +911,11 @@ void WaterTable2::setHydrationStepSize(GLfloat newHydrationStepSize)
 
 void WaterTable2::setVegetationRange(GLfloat newVegStart, GLfloat newVegEnd)
 	{
-	/* Values out of range [0, 1] is unvalid  and vegStart needs to be less than vegEnd */	
+	/* Values out of range [0, 1] is unvalid  and minHydration needs to be less than maxHydration */	
 	if(newVegStart <= newVegEnd && newVegStart >= 0.0 && newVegEnd <= 1.0)
 		{
-			vegStart = newVegStart;
-			vegEnd = newVegEnd;
+			minHydration = newVegStart;
+			maxHydration = newVegEnd;
 		}
 	}
 
@@ -1338,8 +1338,8 @@ void WaterTable2::updateVegetation(GLContextData& contextData) const {
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB,dataItem->hydrationTextureObject);
 	glUniform1iARB(dataItem->vegetationShaderUniformLocations[0], 0);
-	glUniformARB(dataItem->vegetationShaderUniformLocations[1],vegStart);
-	glUniformARB(dataItem->vegetationShaderUniformLocations[2],vegEnd);
+	glUniformARB(dataItem->vegetationShaderUniformLocations[1],minHydration);
+	glUniformARB(dataItem->vegetationShaderUniformLocations[2],maxHydration);
 
 	/* Run the shader program */
 	glBegin(GL_QUADS);

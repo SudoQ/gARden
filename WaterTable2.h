@@ -123,8 +123,8 @@ class WaterTable2:public GLObject
 	GLfloat detectionThreshold; // Threshold value used in the hydration shader for detecting water
 	GLfloat hydrationVelocity; // Hydration preservation factor, determines the velocity of which the hydration changes
 	GLfloat hydrationStepSize; // Step size used by the hydration shader to calcluate the current hydration, greater values increases performance but reduces accuracy.
-	GLfloat vegStart; // The minimum hydration value needed to produce vegetation values
-	GLfloat vegEnd; // The maximum hydration value needed to produce vegetation values
+	GLfloat minHydration; // The minimum hydration value needed to produce vegetation values
+	GLfloat maxHydration; // The maximum hydration value needed to produce vegetation values
 	
 	/* Private methods: */
 	GLfloat calcDerivative(DataItem* dataItem,GLuint quantityTextureObject,bool calcMaxStepSize) const; // Calculates the temporal derivative of the conserved quantities in the given texture object and returns maximum step size if flag is true

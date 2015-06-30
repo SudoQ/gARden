@@ -35,40 +35,33 @@ uniform float hydrationStepSize;
 
 void main()
 	{
-	// Search the surronding pixels for water
 	float n = 0.0;
-	float maxHydration = 0.0;
-	#if 0
-	float range = 80.0; // Range in pixels
-	#else
+	float waterCoverage = 0.0;
 	float range = hydrationRange;
-	#endif
 	float start = -1.0*(range/2.0);
 	float end = range/2.0;
 	float step = hydrationStepSize;
+
+	// Search nearby cells for water
 	for(float i=start; i<end; i+=step){
 		for(float j=start; j<end; j+=step){
 			n++;
+			// Detect water by looking at the water derivative texture
 			float deriv0 = texture2DRect(derivativeSampler, vec2(gl_FragCoord.x+i, gl_FragCoord.y+j)).r;
 			float water = 0.0;
-				
-			// Water detection
-			#if 0
-			if (abs(deriv0) > 0.001){
-			#else
 			if (abs(deriv0) > detectionThreshold){
-			#endif
 				water = 1.0;
 			}
-
 			
-			maxHydration += water;
+			waterCoverage += water;
 		}
 	}
-	maxHydration = maxHydration/n; // The average water coverage
+	waterCoverage = waterCoverage/n; // The average water coverage
+
+	// Take a share of the previous hydration value to simulate growth over time
 	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord.xy).r;	
 	float velocity = hydrationVelocity;
-	float newHydration = previousHydration + (maxHydration - previousHydration)*velocity;
+	float newHydration = previousHydration + (waterCoverage - previousHydration)*velocity;
 	
 	gl_FragColor=vec4(newHydration, 0.0, 0.0, 0.0);
 	}

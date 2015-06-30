@@ -495,8 +495,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	double hydrationRange=0.1625;
 	double detectionThreshold=0.001;
 	double hydrationVelocity=0.01;
-	double vegStart=0.2;
-	double vegEnd=0.8;
+	double minHydration=0.2;
+	double maxHydration=0.8;
 	double hydrationStepSize=2.0;
 	for(int i=1;i<argc;++i)
 		{
@@ -623,9 +623,9 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 			else if(strcasecmp(argv[i]+1,"vr")==0)
 				{
 				++i;
-				vegStart=atof(argv[i]);
+				minHydration=atof(argv[i]);
 				++i;
-				vegEnd=atof(argv[i]);
+				maxHydration=atof(argv[i]);
 				}
 			else if(strcasecmp(argv[i]+1,"hss")==0)
 				{
@@ -883,7 +883,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	waterTable->setDetectionThreshold(detectionThreshold);
 	waterTable->setHydrationVelocity(hydrationVelocity);
 	waterTable->setHydrationStepSize(hydrationStepSize);
-	waterTable->setVegetationRange(vegStart, vegEnd);
+	waterTable->setVegetationRange(minHydration, maxHydration);
 	
 	/* Register a render function with the water table: */
 	addWaterFunction=Misc::createFunctionCall(this,&Sandbox::addWater);
