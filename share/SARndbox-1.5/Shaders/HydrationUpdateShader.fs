@@ -58,7 +58,7 @@ void main()
 	}
 	waterCoverage = waterCoverage/n; // The average water coverage
 
-	// Take a share of the previous hydration value to simulate growth over time
+	// Take a share of the previous hydration value to simulate vegetation growth/decay over time
 	float previousHydration = texture2DRect(prevHydrationSampler, gl_FragCoord.xy).r;	
 	float velocity = hydrationVelocity;
 	float newHydration = previousHydration + (waterCoverage - previousHydration)*velocity;
