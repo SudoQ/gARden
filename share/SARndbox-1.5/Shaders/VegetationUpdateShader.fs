@@ -29,7 +29,6 @@ uniform float vegEnd;
 void main()
 	{
 	float hydration=texture2DRect(hydrationSampler, gl_FragCoord.xy).r;
-	///*	
 	#if 0
 	float vegetation = 0.0;
 	float growthMidpoint = 0.3;
