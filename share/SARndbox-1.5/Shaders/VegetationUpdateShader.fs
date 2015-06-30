@@ -33,35 +33,21 @@ uniform float maxHydration;
 void main()
 	{
 	float hydration=texture2DRect(hydrationSampler, gl_FragCoord.xy).r;
-	#if 0
 	float vegetation = 0.0;
-	float growthMidpoint = 0.3;
-	float decayMidpoint = 0.7;
-	float top = ((decayMidpoint-growthMidpoint)/2.0)+growthMidpoint;
-	float k = 24.0; // Steepness
 	
-	if (hydration > growthMidpoint && hydration <= top){
-			vegetation = 1.0/(1.0 + exp(-1.0 * k * (hydration - growthMidpoint)));
-	} else if (hydration > top && hydration <= decayMidpoint){
-			vegetation = 1.0/(1.0 + exp(k * (hydration - decayMidpoint)));
-	}
-	#else
-	float vegetation = 0.0;
-	float growth = minHydration;
-	float decay = maxHydration;
-	float top = ((decay-growth)/2.0)+growth;
+	float midHydration = ((maxHydration-minHydration)/2.0)+minHydration;
 
-	float k1 = 1.0/(top-growth);
-	float k2 = 1.0/(top-decay);
-	float m1 = 1.0 - top*k1;
-	float m2 = 1.0 - top*k2;
+	// Linear function paramters, f(x) = k*x + m
+	float k1 = 1.0/(midHydration-minHydration);
+	float k2 = 1.0/(midHydration-maxHydration);
+	float m1 = 1.0 - midHydration*k1;
+	float m2 = 1.0 - midHydration*k2;
 	
-	if (hydration > growth && hydration <= top){
+	if (hydration >= minHydration && hydration <= midHydration){
 		vegetation = k1 * hydration + m1;
-	} else if (hydration >= top && hydration < decay){
+	} else if (hydration > midHydration && hydration <= maxHydration){
 		vegetation = k2 * hydration + m2;
 	}
-	#endif
 	
 	gl_FragColor=vec4(vegetation,0.0,0.0,0.0);
 	}
