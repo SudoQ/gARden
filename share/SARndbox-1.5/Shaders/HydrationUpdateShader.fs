@@ -1,9 +1,13 @@
 /***********************************************************************
-HydrationUpdateShader - Shader to update the current hydration level
-Copyright (c) 2012 Oliver Kreylos
-Modified by Simon Johansson 2015
+HydrationUpdateShader - Shader to update the current hydration level.
+The hydration for each cell is determined by calcluating the water 
+ratio of nearby cells. 
+Copyright (c) 2015 Simon Johansson
 
-This file is part of the Augmented Reality Sandbox (SARndbox).
+This file is part of the Vegetation Augmented Reality Sandbox (gARden).
+
+This is a fork of the Augmented Reality Sandbox (SARndbox)
+Copyright (c) 2012 Oliver Kreylos
 
 The Augmented Reality Sandbox is free software; you can redistribute it
 and/or modify it under the terms of the GNU General Public License as
