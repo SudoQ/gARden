@@ -5,6 +5,14 @@ Copyright (c) 2012-2013 Oliver Kreylos
 This fork was developed by Simon Johansson, 2015
 =======================================================================
 
+Introduction to gARden
+======================
+The Vegetation Augmented Reality Sandbox is a fork of the SARndbox
+project with extended vegetation simulation and rendering. 
+To get started, follow the SARndbox installation process and look at
+the additional command line options for controlling the vegetation 
+simulation.
+
 Overview
 ========
 
