@@ -1,10 +1,12 @@
 /***********************************************************************
 PreviousHydrationUpdateShader - Shader to update the previous hydration
 level.
-Copyright (c) 2012 Oliver Kreylos
-Modified by Simon Johansson 2015
+Copyright (c) 2015 Simon Johansson
 
-This file is part of the Augmented Reality Sandbox (SARndbox).
+This file is part of the Vegetation Augmented Reality Sandbox (gARden).
+
+This is a fork of the Augmented Reality Sandbox (SARndbox)
+Copyright (c) 2012 Oliver Kreylos
 
 The Augmented Reality Sandbox is free software; you can redistribute it
 and/or modify it under the terms of the GNU General Public License as

@@ -495,8 +495,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	double hydrationRange=0.1625;
 	double detectionThreshold=0.001;
 	double hydrationVelocity=0.01;
-	double vegStart=0.2;
-	double vegEnd=0.8;
+	double minHydration=0.2;
+	double maxHydration=0.8;
 	double hydrationStepSize=2.0;
 	for(int i=1;i<argc;++i)
 		{
@@ -623,9 +623,9 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 			else if(strcasecmp(argv[i]+1,"vr")==0)
 				{
 				++i;
-				vegStart=atof(argv[i]);
+				minHydration=atof(argv[i]);
 				++i;
-				vegEnd=atof(argv[i]);
+				maxHydration=atof(argv[i]);
 				}
 			else if(strcasecmp(argv[i]+1,"hss")==0)
 				{
@@ -709,6 +709,7 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"     Disables vegetation surface rendering"<<std::endl;
 		std::cout<<"  -hr <hydration range>"<<std::endl;
 		std::cout<<"     Hydration range [0.0, 1.0]"<<std::endl;
+		std::cout<<"     Sets the pixel range of the hydration calculation"<<std::endl;
 		std::cout<<"     Default: 0.1625"<<std::endl;
 		std::cout<<"  -dt <detection threshold>"<<std::endl;
 		std::cout<<"     Water detection threshold"<<std::endl;
@@ -720,7 +721,8 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 		std::cout<<"     Minimum and maximum vegetation hydration"<<std::endl;
 		std::cout<<"     Default: 0.2 0.8"<<std::endl;
 		std::cout<<"  -hss <hydration step size>"<<std::endl;
-		std::cout<<"     Hydration step size"<<std::endl;
+		std::cout<<"     Hydration step size, increasing this parameter will increase the fps"<<std::endl;
+		std::cout<<"     but reduce the vegetation rendering quality"<<std::endl;
 		std::cout<<"     Default: 2"<<std::endl;
 		}
 	
@@ -873,13 +875,15 @@ Sandbox::Sandbox(int& argc,char**& argv,char**& appDefaults)
 	/* Initialize the water flow simulator: */
 	waterTable=new WaterTable2(wtSize[0],wtSize[1],basePlane,basePlaneCorners);
 	waterTable->setElevationRange(elevationMin,rainElevationMax);
-	waterTable->setBaseWaterLevel(baseWaterLevel);
 	waterTable->setWaterDeposit(evaporationRate);
+	waterTable->setBaseWaterLevel(baseWaterLevel);
+
+	/* Initialize the vegetation simulator: */
 	waterTable->setHydrationRange(hydrationRange);
 	waterTable->setDetectionThreshold(detectionThreshold);
 	waterTable->setHydrationVelocity(hydrationVelocity);
 	waterTable->setHydrationStepSize(hydrationStepSize);
-	waterTable->setVegetationRange(vegStart, vegEnd);
+	waterTable->setVegetationRange(minHydration, maxHydration);
 	
 	/* Register a render function with the water table: */
 	addWaterFunction=Misc::createFunctionCall(this,&Sandbox::addWater);
@@ -1020,12 +1024,10 @@ void Sandbox::display(GLContextData& contextData) const
 			}
 		// if(totalTimeStep>1.0e-8f)
 		//	std::cout<<"Ran out of time by "<<totalTimeStep<<std::endl;
-		
+	
+		/* Run the vegetation simulation after the water simulation is done */
 		if(useVegetation){
 			waterTable->runVegetationSimulation(contextData);
-			//waterTable->updateHydration(contextData);
-			//waterTable->updatePrevHydration(contextData);
-			//waterTable->updateVegetation(contextData);
 		}
 		
 		}

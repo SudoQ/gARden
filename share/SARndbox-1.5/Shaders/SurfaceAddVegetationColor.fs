@@ -1,8 +1,12 @@
 /***********************************************************************
-SurfaceAddVegetationColor - Shader fragment to add vegetation color
-Simon Johansson 2015
+SurfaceAddVegetationColor - Shader fragment to add vegetation color.
+The vegetation color scale ranges from a light yellow to a dark green.
+Copyright (c) 2015 Simon Johansson
 
-This file is part of the Augmented Reality Sandbox (SARndbox).
+This file is part of the Vegetation Augmented Reality Sandbox (gARden).
+
+This is a fork of the Augmented Reality Sandbox (SARndbox)
+Copyright (c) 2012 Oliver Kreylos
 
 The Augmented Reality Sandbox is free software; you can redistribute it
 and/or modify it under the terms of the GNU General Public License as
@@ -28,51 +32,12 @@ uniform sampler2DRect vegetationSampler;
 
 varying vec2 waterLevelTexCoord; // Texture coordinate for water level and vegetation texture
 
-void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoord unused?
+void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor)
 	{
 
 	float veg = texture2DRect(vegetationSampler, waterLevelTexCoord).r; // Read vegetation value
 
-	//vec4 color0 =		vec4(0.0/255.0, 	102/255.0, 		0.0, 1.0);
-	//vec4 color1 =		vec4(64.0/255.0, 	140/255.0, 		0.0, 1.0); 
-	//vec4 color2 =		vec4(128.0/255.0,	179/255.0, 		0.0, 1.0);
-	//vec4 color3 =		vec4(191.0/255.0,	217/255.0, 		0.0, 1.0);
-	//vec4 color4 =		vec4(255.0/255.0,	255.0/255.0,	0.0, 1.0);
-	/*
-	if(veg > 0.0){
-		vec4 vegColor;
-		if(veg < 0.2) {
-			vegColor = color0;
-		} else if (veg < 0.4) {
-			vegColor = color1;
-		} else if (veg < 0.6) {
-			vegColor = color2;
-		} else if (veg < 0.8) {
-			vegColor = color3;
-		} else if (veg < 1.0) {
-			vegColor = color4;
-		} else {
-			vegColor = vec4(0.0, 0.0, 0.0, 0.0); 
-		}
-		baseColor=mix(baseColor, vegColor, 0.9);
-	}
-	*/
-	/*
-	if(veg > 0.0) {
-		float r = 0.0;
-		float g = veg;
-		if (veg > 0.8) {
-			r = 0.5;
-		}
-		g = veg*0.8 + 0.2;
-		vec4 vegColor = vec4(r,g,0.0,1.0);
-		baseColor=mix(baseColor, vegColor, 0.9);
-	}
-	*/
-	// TODO Move to seperate color map
 	vec4 vegColor;
-	//vec4 color0 =		vec4(66.0/255.0, 	33.0/255.0, 	18.0/255.0, 1.0);
-	//vec4 color1 =		vec4(159.0/255.0, 81.0/255.0, 	42.0/255.0, 1.0); 
 	vec4 color0 =		vec4(247.0/255.0,	232.0/255.0, 	90.0/255.0, 1.0);
 	vec4 color1 =		vec4(253.0/255.0,	254.0/255.0, 	0.0, 1.0);
 	vec4 color2 =		vec4(228.0/255.0,	238.0/255.0,	0.0, 1.0);
@@ -86,35 +51,36 @@ void addVegetationColor(in vec2 fragCoord,inout vec4 baseColor) //FIXME fragCoor
 	vec4 color10 =	vec4(45.0/255.0,	112.0/255.0,	0.0, 1.0);
 	vec4 color11 =	vec4(23.0/255.0,	97.0/255.0,	0.0, 1.0);
 	vec4 color12 =	vec4(0.0/255.0,		82.0/255.0,	0.0, 1.0);
-	if(veg > 0.0){
-		if(veg <= 1.0/13.0){
-				vegColor = color0;
-		} else if(veg <= 2.0/13.0) {
-				vegColor = color1;
-		} else if(veg <= 3.0/13.0) {
-				vegColor = color2;
-		} else if(veg <= 4.0/13.0) {
-				vegColor = color3;
-		} else if(veg <= 5.0/13.0) {
-				vegColor = color4;
-		} else if(veg <= 6.0/13.0) {
-				vegColor = color5;
-		} else if(veg <= 7.0/13.0) {
-				vegColor = color6;
-		} else if(veg <= 8.0/13.0) {
-				vegColor = color7;
-		} else if(veg <= 9.0/13.0) {
-				vegColor = color8;
-		} else if(veg <= 10.0/13.0) {
-				vegColor = color9;
-		} else if(veg <= 11.0/13.0) {
-				vegColor = color10;
-		} else if(veg <= 12.0/13.0) {
-				vegColor = color11;
-		} else {
-				vegColor = color12;
-		}
-		baseColor=mix(baseColor, vegColor, 0.8);
-	}
 
+	if(veg > 0.0)
+		{
+			if(veg <= 1.0/13.0){
+					vegColor = color0;
+			} else if(veg <= 2.0/13.0) {
+					vegColor = color1;
+			} else if(veg <= 3.0/13.0) {
+					vegColor = color2;
+			} else if(veg <= 4.0/13.0) {
+					vegColor = color3;
+			} else if(veg <= 5.0/13.0) {
+					vegColor = color4;
+			} else if(veg <= 6.0/13.0) {
+					vegColor = color5;
+			} else if(veg <= 7.0/13.0) {
+					vegColor = color6;
+			} else if(veg <= 8.0/13.0) {
+					vegColor = color7;
+			} else if(veg <= 9.0/13.0) {
+					vegColor = color8;
+			} else if(veg <= 10.0/13.0) {
+					vegColor = color9;
+			} else if(veg <= 11.0/13.0) {
+					vegColor = color10;
+			} else if(veg <= 12.0/13.0) {
+					vegColor = color11;
+			} else {
+					vegColor = color12;
+			}
+			baseColor=mix(baseColor, vegColor, 1.0);
+		}
 	}

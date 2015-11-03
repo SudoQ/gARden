@@ -2,6 +2,7 @@
 Water2BathymetryUpdateShader - Shader to adjust the water surface height
 after a change to the bathymetry.
 Copyright (c) 2012 Oliver Kreylos
+Modified by Simon Johansson 2015
 
 This file is part of the Augmented Reality Sandbox (SARndbox).
 
@@ -45,13 +46,16 @@ void main()
 	vec3 q=texture2DRect(quantitySampler,gl_FragCoord.xy).rgb;
 
 	/* Update the water surface height: */
-	#if 0
+	#if 0 // Disable base water level
 	gl_FragColor=vec4(max(q.x-bOld,0.0)+bNew,q.yz,0.0);
 	#else	
+	// Set the base water level to the minimum value
+	// This value is relative to the sandbox base plane equation
 	float height = max(q.x-bOld,0.0)+bNew;
 	float xValue = height;
-	if (gl_FragCoord.x < (0.05 * texWidth) || gl_FragCoord.x > (0.95 * texWidth)){}
-	else if (gl_FragCoord.y < (0.05 * texHeight) || gl_FragCoord.y > (0.95 * texHeight)){}
+	// This border check is needed to prevent a bug that floods the whole sandbox
+	if (gl_FragCoord.x < (0.02 * texWidth) || gl_FragCoord.x > (0.98 * texWidth)){}
+	else if (gl_FragCoord.y < (0.02 * texHeight) || gl_FragCoord.y > (0.98 * texHeight)){}
 	else {
 		float minimum = baseWaterLevel;
 		if (height < minimum) {
